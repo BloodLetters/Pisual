@@ -26,10 +26,10 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Run Cargo Check
-        run: cargo check --verbose
+        run: cargo check --target wasm32-wasip2 --verbose
 
       - name: Run Cargo Clippy
-        run: cargo clippy --all-targets -- -D warnings
+        run: cargo clippy --target wasm32-wasip2 --all-targets -- -D warnings
 
   nightly:
     name: Nightly Release
@@ -53,7 +53,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Build Release
-        run: cargo build --release
+        run: cargo build --target wasm32-wasip2 --release
 
       - name: Update Nightly Git Tag
         run: |
