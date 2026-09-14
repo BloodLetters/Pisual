@@ -20,7 +20,7 @@ impl CommandHandler for CreateCommand {
         let id = match get_string_arg(&args, "id") {
             Some(id) if !id.trim().is_empty() => id,
             _ => {
-                send_error(&sender, "Hologram ID cannot be empty! Usage: /holo create <id> <text>");
+                send_error(&sender, "Usage: /holo create <id> [text]");
                 return Ok(0);
             }
         };
@@ -31,7 +31,6 @@ impl CommandHandler for CreateCommand {
         let world = player.get_world();
         let world_name = world.get_id();
 
-        // Spawn "SLIGHT" above the player feet so it's clearly visible
         let spawn_pos = (pos.0, pos.1 + 1.2, pos.2);
 
         let data = HologramData::new(id.clone(), world_name, spawn_pos, vec![text]);
@@ -56,21 +55,25 @@ impl CommandHandler for CreateCommand {
                     &sender,
                     &format!("&aHologram '&e{id}&a' created successfully at your position!"),
                 );
+                Ok(1)
             }
             Err(e) => {
                 send_error(&sender, &format!("Failed to create hologram: {e}"));
+                Ok(0)
             }
         }
-
-        Ok(0)
     }
 }
 
 pub fn build_node() -> CommandNode {
-    CommandNode::literal("create").then(
-        CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord)).then(
-            CommandNode::argument("text", &ArgumentType::String(StringType::Greedy))
-                .execute(CreateCommand),
-        ),
-    )
+    CommandNode::literal("create")
+        .execute(CreateCommand)
+        .then(
+            CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+                .execute(CreateCommand)
+                .then(
+                    CommandNode::argument("text", &ArgumentType::String(StringType::Greedy))
+                        .execute(CreateCommand),
+                ),
+        )
 }

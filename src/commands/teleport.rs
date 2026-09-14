@@ -58,7 +58,7 @@ impl CommandHandler for TeleportCommand {
         player.teleport(target_pos, None, None, world);
         send_feedback(&sender, &format!("&aTeleported to hologram '&e{id}&a'!"));
 
-        Ok(0)
+        Ok(1)
     }
 }
 
@@ -111,27 +111,33 @@ impl CommandHandler for MoveHereCommand {
             &format!("&aMoved hologram '&e{id}&a' to your current position!"),
         );
 
-        Ok(0)
+        Ok(1)
     }
 }
 
 pub fn build_tp_node() -> CommandNode {
-    CommandNode::literal("tp").then(
-        CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
-            .execute(TeleportCommand),
-    )
+    CommandNode::literal("tp")
+        .execute(TeleportCommand)
+        .then(
+            CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+                .execute(TeleportCommand),
+        )
 }
 
 pub fn build_movehere_node() -> CommandNode {
-    CommandNode::literal("movehere").then(
-        CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
-            .execute(MoveHereCommand),
-    )
+    CommandNode::literal("movehere")
+        .execute(MoveHereCommand)
+        .then(
+            CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+                .execute(MoveHereCommand),
+        )
 }
 
 pub fn build_tphere_node() -> CommandNode {
-    CommandNode::literal("tphere").then(
-        CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
-            .execute(MoveHereCommand),
-    )
+    CommandNode::literal("tphere")
+        .execute(MoveHereCommand)
+        .then(
+            CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+                .execute(MoveHereCommand),
+        )
 }

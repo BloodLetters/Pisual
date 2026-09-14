@@ -6,12 +6,10 @@ use std::{
 
 const FILE_NAME: &str = "holograms.json";
 
-/// Returns path hologram.json.
 pub fn get_storage(data_folder: &Path) -> PathBuf {
     data_folder.join(FILE_NAME)
 }
 
-/// Saves the list of hologram configurations to a JSON file on disk.
 pub fn save_to_disk(data_folder: &Path, data: &[HologramData]) -> Result<(), String> {
     if !data_folder.exists() {
         fs::create_dir_all(data_folder)
@@ -24,24 +22,13 @@ pub fn save_to_disk(data_folder: &Path, data: &[HologramData]) -> Result<(), Str
 
     fs::write(&file_path, json_string)
         .map_err(|e| format!("Failed to write holograms.json: {e}"))?;
-
-    crate::logger::info(&format!(
-        "Successfully saved {} hologram configurations to '{:?}'",
-        data.len(),
-        file_path
-    ));
     Ok(())
 }
 
-/// Loads the list of hologram configurations from the JSON file on disk.
 pub fn load_from_disk(data_folder: &Path) -> Result<Vec<HologramData>, String> {
     let file_path = get_storage(data_folder);
 
     if !file_path.exists() {
-        crate::logger::info(&format!(
-            "Storage file '{:?}' not found. Initializing with empty state.",
-            file_path
-        ));
         return Ok(Vec::new());
     }
 

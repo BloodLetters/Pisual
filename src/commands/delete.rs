@@ -37,26 +37,30 @@ impl CommandHandler for DeleteCommand {
                     &sender,
                     &format!("&aHologram '&e{id}&a' has been deleted and despawned."),
                 );
+                Ok(1)
             }
             Err(e) => {
                 send_error(&sender, &format!("Failed to delete hologram: {e}"));
+                Ok(0)
             }
         }
-
-        Ok(0)
     }
 }
 
 pub fn build_node() -> CommandNode {
-    CommandNode::literal("delete").then(
-        CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
-            .execute(DeleteCommand),
-    )
+    CommandNode::literal("delete")
+        .execute(DeleteCommand)
+        .then(
+            CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+                .execute(DeleteCommand),
+        )
 }
 
 pub fn build_remove_node() -> CommandNode {
-    CommandNode::literal("remove").then(
-        CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
-            .execute(DeleteCommand),
-    )
+    CommandNode::literal("remove")
+        .execute(DeleteCommand)
+        .then(
+            CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+                .execute(DeleteCommand),
+        )
 }

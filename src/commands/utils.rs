@@ -21,7 +21,13 @@ pub fn send_error(sender: &CommandSender, message: &str) {
 
 pub fn get_string_arg(args: &ConsumedArgs, key: &str) -> Option<String> {
     match args.get_value(key) {
-        Arg::Simple(s) | Arg::Msg(s) => Some(s),
+        Arg::Simple(s) | Arg::Msg(s) => {
+            if s.trim().is_empty() {
+                None
+            } else {
+                Some(s)
+            }
+        }
         _ => None,
     }
 }

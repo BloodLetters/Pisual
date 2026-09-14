@@ -32,13 +32,13 @@ impl CommandHandler for SaveCommand {
                         mgr.count()
                     ),
                 );
+                Ok(1)
             }
             Err(e) => {
                 send_error(&sender, &format!("Failed to save holograms to disk: {e}"));
+                Ok(0)
             }
         }
-
-        Ok(0)
     }
 }
 

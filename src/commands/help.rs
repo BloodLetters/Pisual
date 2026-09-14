@@ -26,7 +26,7 @@ impl CommandHandler for HelpCommand {
         send_feedback(&sender, "&e/holo load &8- &7Reload and respawn all holograms from disk");
         send_feedback(&sender, "&e/holo save &8- &7Save all holograms to disk storage");
         send_feedback(&sender, "&e/holo help &8- &7Display this help message");
-        Ok(0)
+        Ok(1)
     }
 }
 

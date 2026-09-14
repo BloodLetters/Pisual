@@ -8,13 +8,24 @@ pub mod save;
 pub mod teleport;
 pub mod utils;
 
-use pumpkin_plugin_api::{command::Command, Context};
+use pumpkin_plugin_api::{
+    command::Command,
+    permission::{Permission, PermissionDefault, PermissionLevel},
+    Context,
+};
+pub const PERMISSION_NODE: &str = "Pisual:admin";
 
-/// Permission node required for administering Pisual holograms.
-pub const PERMISSION_NODE: &str = "pisual.admin";
-
-/// Builds the root command tree and registers it with the plugin context.
 pub fn register_commands(context: &Context) {
+    let perm = Permission {
+        node: PERMISSION_NODE.to_string(),
+        description: "Admin permissions for Pisual holograms".to_string(),
+        default: PermissionDefault::Op(PermissionLevel::Two),
+        children: Vec::new(),
+    };
+    if let Err(e) = context.register_permission(&perm) {
+        crate::logger::warn(&format!("Failed to register permission node {PERMISSION_NODE}: {e}"));
+    }
+
     let cmd = Command::new(
         &[
             "pisual".to_string(),
@@ -23,7 +34,8 @@ pub fn register_commands(context: &Context) {
         ],
         "Manage Pisual holograms",
     )
-    .execute(help::HelpCommand)
+    
+    // Cmd & Args
     .then(create::build_node())
     .then(delete::build_node())
     .then(delete::build_remove_node())
@@ -37,7 +49,8 @@ pub fn register_commands(context: &Context) {
     .then(teleport::build_movehere_node())
     .then(teleport::build_tphere_node())
     .then(save::build_node())
-    .then(help::build_node());
+    .then(help::build_node())
+    .execute(help::HelpCommand);
 
     context.register_command(cmd, PERMISSION_NODE);
     crate::logger::info("Registered /pisual (/holo, /hologram) command hierarchy.");

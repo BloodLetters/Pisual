@@ -55,7 +55,7 @@ impl CommandHandler for AddLineCommand {
             &sender,
             &format!("&aAdded line &e#{total_lines}&a to hologram '&e{id}&a'!"),
         );
-        Ok(0)
+        Ok(1)
     }
 }
 
@@ -117,13 +117,13 @@ impl CommandHandler for SetLineCommand {
                     &sender,
                     &format!("&aUpdated line &e#{index_1based}&a of hologram '&e{id}&a'!"),
                 );
+                Ok(1)
             }
             Err(e) => {
                 send_error(&sender, &e);
+                Ok(0)
             }
         }
-
-        Ok(0)
     }
 }
 
@@ -179,41 +179,55 @@ impl CommandHandler for RemoveLineCommand {
                         "&aRemoved line &e#{index_1based} &7(\"{removed}&7\") &afrom hologram '&e{id}&a'!"
                     ),
                 );
+                Ok(1)
             }
             Err(e) => {
                 send_error(&sender, &e);
+                Ok(0)
             }
         }
-
-        Ok(0)
     }
 }
 
 pub fn build_addline_node() -> CommandNode {
-    CommandNode::literal("addline").then(
-        CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord)).then(
-            CommandNode::argument("text", &ArgumentType::String(StringType::Greedy))
-                .execute(AddLineCommand),
-        ),
-    )
+    CommandNode::literal("addline")
+        .execute(AddLineCommand)
+        .then(
+            CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+                .execute(AddLineCommand)
+                .then(
+                    CommandNode::argument("text", &ArgumentType::String(StringType::Greedy))
+                        .execute(AddLineCommand),
+                ),
+        )
 }
 
 pub fn build_setline_node() -> CommandNode {
-    CommandNode::literal("setline").then(
-        CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord)).then(
-            CommandNode::argument("index", &ArgumentType::Integer((Some(1), None))).then(
-                CommandNode::argument("text", &ArgumentType::String(StringType::Greedy))
-                    .execute(SetLineCommand),
-            ),
-        ),
-    )
+    CommandNode::literal("setline")
+        .execute(SetLineCommand)
+        .then(
+            CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+                .execute(SetLineCommand)
+                .then(
+                    CommandNode::argument("index", &ArgumentType::Integer((Some(1), None)))
+                        .execute(SetLineCommand)
+                        .then(
+                            CommandNode::argument("text", &ArgumentType::String(StringType::Greedy))
+                                .execute(SetLineCommand),
+                        ),
+                ),
+        )
 }
 
 pub fn build_removeline_node() -> CommandNode {
-    CommandNode::literal("removeline").then(
-        CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord)).then(
-            CommandNode::argument("index", &ArgumentType::Integer((Some(1), None)))
-                .execute(RemoveLineCommand),
-        ),
-    )
+    CommandNode::literal("removeline")
+        .execute(RemoveLineCommand)
+        .then(
+            CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+                .execute(RemoveLineCommand)
+                .then(
+                    CommandNode::argument("index", &ArgumentType::Integer((Some(1), None)))
+                        .execute(RemoveLineCommand),
+                ),
+        )
 }

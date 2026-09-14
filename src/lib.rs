@@ -28,7 +28,7 @@ impl Plugin for Pisual {
             name: "Pisual".into(),
             version: env!("CARGO_PKG_VERSION").into(),
             authors: vec!["SirAshesh".into()],
-            description: "Modern Hologram plugin for Pumpkin MC powered by TextDisplay entities".into(),
+            description: "Modern Hologram plugin for Pumpkin MC".into(),
             permissions: vec![
                 pumpkin_plugin_api::permissions::FS_READ_DATA.into(),
                 pumpkin_plugin_api::permissions::FS_WRITE_DATA.into(),
@@ -65,11 +65,11 @@ impl Plugin for Pisual {
     fn on_unload(&self, _context: Context) -> pumpkin_plugin_api::Result<()> {
         logger::info("Disabling Pisual plugin...");
 
-        if let Some(lock) = MANAGER.get() {
-            if let Ok(mut mgr) = lock.write() {
-                mgr.despawn_all();
-                logger::info("All hologram entities have been cleared from worlds.");
-            }
+        if let Some(lock) = MANAGER.get()
+            && let Ok(mut mgr) = lock.write()
+        {
+            mgr.despawn_all();
+            logger::info("All hologram entities have been cleared from worlds.");
         }
 
         logger::info("Pisual plugin unloaded. Goodbye!");

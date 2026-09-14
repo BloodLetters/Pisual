@@ -34,13 +34,13 @@ impl CommandHandler for LoadCommand {
                         mgr.count()
                     ),
                 );
+                Ok(1)
             }
             Err(e) => {
                 send_error(&sender, &format!("Failed to load holograms from disk: {e}"));
+                Ok(0)
             }
         }
-
-        Ok(0)
     }
 }
 

@@ -57,7 +57,7 @@ impl CommandHandler for ListCommand {
             );
         }
 
-        Ok(0)
+        Ok(1)
     }
 }
 
