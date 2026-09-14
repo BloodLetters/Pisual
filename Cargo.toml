@@ -1,0 +1,16 @@
+[package]
+name = "Pisual"
+version = "0.1.0"
+edition = "2024"
+
+[lib] 
+crate-type = ["cdylib"]
+
+[dependencies]
+pumpkin-plugin-api = "0.1.0-dev+26.2-26.45"
+tracing = "0.1"
+
+
+
+[profile.release] 
+lto = true
