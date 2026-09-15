@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Technical documentation and IPC API reference for Pisual, a hologram plugin for the Pumpkin Minecraft server.">
+  <title>Pisual IPC Documentation | Pumpkin MC</title>
+  <link rel="icon" type="image/png" href="assets/Pisual.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header class="header">
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <a href="#overview" class="brand">
+        <img src="assets/Pisual.png" alt="Pisual" class="brand-logo">
+        <span class="brand-name">Pisual Docs</span>
+        <span class="brand-version">v0.1.0</span>
+      </a>
+    </div>
+
+    <div class="header-right">
+      <div class="search-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="search-input" placeholder="Search documentation..." autocomplete="off">
+      </div>
+
+      <a href="https://github.com/BloodLetters/Pisual" target="_blank" rel="noopener noreferrer" class="header-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path>
+        </svg>
+        <span>GitHub</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- App Layout -->
+  <div class="app-layout">
+
+    <!-- Left Navigation Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="nav-group">
+        <div class="nav-group-title">Getting Started</div>
+        <ul class="nav-list">
+          <li class="nav-item"><a href="#overview" class="active">Overview</a></li>
+          <li class="nav-item"><a href="#quickstart">Integration Guide</a></li>
+          <li class="nav-item"><a href="#tester">Interactive Tester</a></li>
+        </ul>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">IPC Actions</div>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="#action-create">
+              <span>create</span>
+              <span class="badge-tag badge-post">post</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#action-create-ram">
+              <span>create_ram</span>
+              <span class="badge-tag badge-ram">ram</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#action-edit">
+              <span>edit</span>
+              <span class="badge-tag badge-put">put</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#action-move">
+              <span>move</span>
+              <span class="badge-tag badge-put">put</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#action-delete">
+              <span>delete</span>
+              <span class="badge-tag badge-del">del</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#action-get">
+              <span>get</span>
+              <span class="badge-tag badge-get">get</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#action-list">
+              <span>list</span>
+              <span class="badge-tag badge-get">get</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">Reference</div>
+        <ul class="nav-list">
+          <li class="nav-item"><a href="#models">Billboard Types</a></li>
+          <li class="nav-item"><a href="#responses">Response Schema</a></li>
+          <li class="nav-item"><a href="#errors">Error Handling</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="content-area">
+
+      <!-- Overview -->
+      <section id="overview">
+        <h1 class="page-title">Inter-Plugin Communication (IPC)</h1>
+        <p class="page-lead">
+          Pisual exposes a message-based IPC protocol on Pumpkin MC. Other plugins running on the server can dispatch JSON messages to spawn, update, relocate, or remove holograms programmatically at runtime.
+        </p>
+
+        <h2>Protocol Basics</h2>
+        <p>
+          Pisual handles IPC calls through Pumpkin's native <code>pumpkin_plugin_api::ipc</code> subsystem. When sending an IPC message, serialize the request struct to a JSON byte vector (<code>Vec&lt;u8&gt;</code>) and target plugin identifier <code>"Pisual"</code>.
+        </p>
+
+        <ul>
+          <li><strong>Transport:</strong> Native WebAssembly component model IPC channel.</li>
+          <li><strong>Data Encoding:</strong> UTF-8 JSON payloads.</li>
+          <li><strong>Target Identifier:</strong> <code>"Pisual"</code> (case-sensitive).</li>
+          <li><strong>Response:</strong> Serialized JSON object implementing the standard <code>IpcResponse</code> wrapper.</li>
+        </ul>
+      </section>
+
+      <!-- Quickstart -->
+      <section id="quickstart">
+        <h2>Integration Guide</h2>
+        <p>
+          Add the dependencies below to your calling plugin's <code>Cargo.toml</code>:
+        </p>
+
+        <div class="code-block">
+          <div class="code-bar">
+            <span>Cargo.toml</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code>[dependencies]
+pumpkin-plugin-api = "0.1.0-dev"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"</code></pre>
+        </div>
+
+        <p>
+          Dispatching a message to Pisual from Rust:
+        </p>
+
+        <div class="code-block">
+          <div class="code-bar">
+            <span>caller_plugin.rs</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code>use pumpkin_plugin_api::ipc;
+
+pub fn spawn_hologram() -> Result&lt;(), String&gt; {
+    // 1. Build JSON request payload
+    let payload = serde_json::to_vec(&serde_json::json!({
+        "action": "create",
+        "id": "welcome_board",
+        "world": "world",
+        "position": [0.0, 65.0, 0.0],
+        "lines": ["&6&lSERVER SPAWN", "&7Welcome to Pumpkin MC!"]
+    })).map_err(|e| e.to_string())?;
+
+    // 2. Send message to Pisual
+    let response_bytes = ipc::send_ipc_message("Pisual".to_string(), payload)
+        .map_err(|e| format!("IPC transport failed: {e}"))?;
+
+    // 3. Parse JSON response
+    let response: serde_json::Value = serde_json::from_slice(&response_bytes)
+        .map_err(|e| format!("Malformed response: {e}"))?;
+
+    if response["success"].as_bool().unwrap_or(false) {
+        Ok(())
+    } else {
+        let err = response["error"].as_str().unwrap_or("Unknown error");
+        Err(err.to_string())
+    }
+}</code></pre>
+        </div>
+      </section>
+
+      <!-- Interactive Tester -->
+      <section id="tester">
+        <h2>Interactive Request Builder</h2>
+        <p>
+          Select an action and configure fields to generate formatted JSON payloads and caller Rust snippets.
+        </p>
+
+        <div class="playground-box">
+          <div class="playground-grid">
+            <!-- Left Form Controls -->
+            <div class="pg-col">
+              <div>
+                <label class="pg-label" for="pg-action">Action</label>
+                <select id="pg-action" class="pg-select" style="margin-top: 4px;">
+                  <option value="create">create (Persistent)</option>
+                  <option value="create_ram">create_ram (RAM only)</option>
+                  <option value="edit">edit (Modify lines/visuals)</option>
+                  <option value="move">move (Relocate position)</option>
+                  <option value="delete">delete (Despawn & remove)</option>
+                  <option value="get">get (Query hologram)</option>
+                  <option value="list">list (List all holograms)</option>
+                </select>
+              </div>
+
+              <div id="row-id">
+                <label class="pg-label" for="pg-id">Hologram ID</label>
+                <input type="text" id="pg-id" class="pg-input" value="spawn_hologram" style="margin-top: 4px;">
+              </div>
+
+              <div id="row-world">
+                <label class="pg-label" for="pg-world">World Name</label>
+                <input type="text" id="pg-world" class="pg-input" value="world" style="margin-top: 4px;">
+              </div>
+
+              <div id="row-pos">
+                <label class="pg-label">Position [X, Y, Z]</label>
+                <div class="pg-row-3" style="margin-top: 4px;">
+                  <input type="number" id="pg-x" class="pg-input" value="0.0" step="0.5" placeholder="X">
+                  <input type="number" id="pg-y" class="pg-input" value="64.0" step="0.5" placeholder="Y">
+                  <input type="number" id="pg-z" class="pg-input" value="0.0" step="0.5" placeholder="Z">
+                </div>
+              </div>
+
+              <div id="row-lines">
+                <label class="pg-label" for="pg-lines">Lines</label>
+                <textarea id="pg-lines" class="pg-textarea" rows="3" style="margin-top: 4px;">&a&lWelcome to the server!&#10;&7Type &b/help &7for commands</textarea>
+              </div>
+
+              <div id="row-visuals">
+                <div style="margin-bottom: 8px;">
+                  <label class="pg-label" for="pg-billboard">Billboard</label>
+                  <select id="pg-billboard" class="pg-select" style="margin-top: 4px;">
+                    <option value="center">center</option>
+                    <option value="vertical" selected>vertical</option>
+                    <option value="horizontal">horizontal</option>
+                    <option value="fixed">fixed</option>
+                  </select>
+                </div>
+
+                <div style="display: flex; gap: 16px; margin-top: 6px;">
+                  <label class="pg-checkbox">
+                    <input type="checkbox" id="pg-shadow" checked>
+                    <span>Shadow</span>
+                  </label>
+                  <label class="pg-checkbox">
+                    <input type="checkbox" id="pg-see-through">
+                    <span>See-through</span>
+                  </label>
+                </div>
+              </div>
+
+              <button type="button" class="btn-run" id="btn-simulate" style="margin-top: 8px;">Test Simulation</button>
+            </div>
+
+            <!-- Right Preview -->
+            <div class="pg-col">
+              <div class="pg-tabs">
+                <button type="button" class="pg-tab-btn active" data-tab="json">JSON Request</button>
+                <button type="button" class="pg-tab-btn" data-tab="rust">Rust Snippet</button>
+              </div>
+
+              <div class="code-block" style="margin: 0;" id="box-json">
+                <div class="code-bar">
+                  <span>Payload</span>
+                  <button class="copy-btn" id="btn-copy-json">Copy</button>
+                </div>
+                <pre><code id="pg-json-preview"></code></pre>
+              </div>
+
+              <div class="code-block" style="margin: 0; display: none;" id="box-rust">
+                <div class="code-bar">
+                  <span>Rust</span>
+                  <button class="copy-btn" id="btn-copy-rust">Copy</button>
+                </div>
+                <pre><code id="pg-rust-preview"></code></pre>
+              </div>
+
+              <div style="margin-top: 10px;">
+                <div class="pg-label" style="margin-bottom: 4px;">Simulated Response</div>
+                <div class="response-viewer" id="pg-response-view">Click "Test Simulation" to generate simulated response.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Action Reference -->
+      <section id="actions">
+        <h2>Action Reference</h2>
+
+        <!-- create -->
+        <div class="action-block" id="action-create">
+          <div class="action-header-row">
+            <span class="badge-tag badge-post">Action</span>
+            <span class="action-title">create</span>
+          </div>
+          <p>
+            Creates a persistent hologram. Saved automatically to disk in <code>plugins/Pisual/holograms.json</code> and restored upon server reload.
+          </p>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Field</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="field-name">action</span></td>
+                  <td><span class="field-type">"create"</span></td>
+                  <td><span class="field-req">required</span></td>
+                  <td>Action identifier string</td>
+                </tr>
+                <tr>
+                  <td><span class="field-name">id</span></td>
+                  <td><span class="field-type">string</span></td>
+                  <td><span class="field-req">required</span></td>
+                  <td>Unique hologram identifier</td>
+                </tr>
+                <tr>
+                  <td><span class="field-name">world</span></td>
+                  <td><span class="field-type">string</span></td>
+                  <td><span class="field-req">required</span></td>
+                  <td>Target world name</td>
+                </tr>
+                <tr>
+                  <td><span class="field-name">position</span></td>
+                  <td><span class="field-type">[f64, f64, f64]</span></td>
+                  <td><span class="field-req">required</span></td>
+                  <td>Coordinates <code>[X, Y, Z]</code></td>
+                </tr>
+                <tr>
+                  <td><span class="field-name">lines</span></td>
+                  <td><span class="field-type">string[]</span></td>
+                  <td><span class="field-req">required</span></td>
+                  <td>List of text lines (supports Minecraft color codes)</td>
+                </tr>
+                <tr>
+                  <td><span class="field-name">ram</span></td>
+                  <td><span class="field-type">boolean</span></td>
+                  <td><span class="field-opt">optional</span></td>
+                  <td>If true, excludes hologram from disk persistence</td>
+                </tr>
+                <tr>
+                  <td><span class="field-name">billboard</span></td>
+                  <td><span class="field-type">BillboardType</span></td>
+                  <td><span class="field-opt">optional</span></td>
+                  <td><code>"center"</code>, <code>"vertical"</code>, <code>"horizontal"</code>, <code>"fixed"</code></td>
+                </tr>
+                <tr>
+                  <td><span class="field-name">shadow</span></td>
+                  <td><span class="field-type">boolean</span></td>
+                  <td><span class="field-opt">optional</span></td>
+                  <td>Default <code>true</code>. Renders text drop shadow</td>
+                </tr>
+                <tr>
+                  <td><span class="field-name">see_through</span></td>
+                  <td><span class="field-type">boolean</span></td>
+                  <td><span class="field-opt">optional</span></td>
+                  <td>Default <code>false</code>. Visible through obstacles</td>
+                </tr>
+                <tr>
+                  <td><span class="field-name">scale</span></td>
+                  <td><span class="field-type">[f32, f32, f32]</span></td>
+                  <td><span class="field-opt">optional</span></td>
+                  <td>Default <code>[1.0, 1.0, 1.0]</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="code-block">
+            <div class="code-bar">
+              <span>Request JSON</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>{
+  "action": "create",
+  "id": "rules_board",
+  "world": "world",
+  "position": [10.0, 65.0, 0.0],
+  "lines": ["&c&lSERVER RULES", "&f1. Respect players"],
+  "billboard": "vertical"
+}</code></pre>
+          </div>
+        </div>
+
+        <!-- create_ram -->
+        <div class="action-block" id="action-create-ram">
+          <div class="action-header-row">
+            <span class="badge-tag badge-ram">Action</span>
+            <span class="action-title">create_ram</span>
+          </div>
+          <p>
+            Creates an ephemeral in-memory hologram. It performs zero disk I/O, making it suitable for fast-updating counters, timers, and temporary display text. It will not be restored upon server restart.
+          </p>
+
+          <div class="code-block">
+            <div class="code-bar">
+              <span>Request JSON</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>{
+  "action": "create_ram",
+  "id": "timer_arena_1",
+  "world": "arena",
+  "position": [50.0, 70.0, 50.0],
+  "lines": ["&eMatch begins in: &a10s"]
+}</code></pre>
+          </div>
+        </div>
+
+        <!-- edit -->
+        <div class="action-block" id="action-edit">
+          <div class="action-header-row">
+            <span class="badge-tag badge-put">Action</span>
+            <span class="action-title">edit</span>
+          </div>
+          <p>
+            Updates lines or visual parameters of an existing hologram. If lines are added or removed, text display entities are spawned or despawned accordingly.
+          </p>
+
+          <div class="code-block">
+            <div class="code-bar">
+              <span>Request JSON</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>{
+  "action": "edit",
+  "id": "rules_board",
+  "lines": ["&c&lNEW RULES", "&aHave fun!"],
+  "shadow": false
+}</code></pre>
+          </div>
+        </div>
+
+        <!-- move -->
+        <div class="action-block" id="action-move">
+          <div class="action-header-row">
+            <span class="badge-tag badge-put">Action</span>
+            <span class="action-title">move</span>
+          </div>
+          <p>
+            Teleports a hologram to a new coordinate position. Supplying the optional <code>world</code> field relocates the hologram to a different loaded world.
+          </p>
+
+          <div class="code-block">
+            <div class="code-bar">
+              <span>Request JSON</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>{
+  "action": "move",
+  "id": "rules_board",
+  "world": "world_nether",
+  "position": [0.0, 80.0, 0.0]
+}</code></pre>
+          </div>
+        </div>
+
+        <!-- delete -->
+        <div class="action-block" id="action-delete">
+          <div class="action-header-row">
+            <span class="badge-tag badge-del">Action</span>
+            <span class="action-title">delete</span>
+          </div>
+          <p>
+            Despawns text display entities from the world and deletes the hologram from memory and disk.
+          </p>
+
+          <div class="code-block">
+            <div class="code-bar">
+              <span>Request JSON</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>{
+  "action": "delete",
+  "id": "rules_board"
+}</code></pre>
+          </div>
+        </div>
+
+        <!-- get -->
+        <div class="action-block" id="action-get">
+          <div class="action-header-row">
+            <span class="badge-tag badge-get">Action</span>
+            <span class="action-title">get</span>
+          </div>
+          <p>
+            Retrieves the full data structure for a single hologram by ID.
+          </p>
+
+          <div class="code-block">
+            <div class="code-bar">
+              <span>Response JSON</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>{
+  "success": true,
+  "data": {
+    "id": "rules_board",
+    "world_name": "world",
+    "position": [10.0, 65.0, 0.0],
+    "lines": ["&c&lSERVER RULES", "&f1. Respect players"],
+    "billboard": "vertical",
+    "shadow": true,
+    "see_through": false,
+    "scale": [1.0, 1.0, 1.0]
+  }
+}</code></pre>
+          </div>
+        </div>
+
+        <!-- list -->
+        <div class="action-block" id="action-list">
+          <div class="action-header-row">
+            <span class="badge-tag badge-get">Action</span>
+            <span class="action-title">list</span>
+          </div>
+          <p>
+            Returns an array containing all active holograms currently loaded in memory.
+          </p>
+
+          <div class="code-block">
+            <div class="code-bar">
+              <span>Request JSON</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>{
+  "action": "list"
+}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Reference -->
+      <section id="models">
+        <h2>Billboard Types</h2>
+        <p>
+          Determines how the hologram rotates relative to players in Minecraft:
+        </p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Mode</th>
+                <th>Behavior</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>"center"</code></td>
+                <td>Default. Rotates both yaw and pitch directly toward observing player.</td>
+              </tr>
+              <tr>
+                <td><code>"vertical"</code></td>
+                <td>Standard upright billboard. Rotates around Y-axis only without tilting up or down.</td>
+              </tr>
+              <tr>
+                <td><code>"horizontal"</code></td>
+                <td>Faces upward or flat against horizontal surfaces.</td>
+              </tr>
+              <tr>
+                <td><code>"fixed"</code></td>
+                <td>Fixed angle in the world, does not rotate toward players.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="responses">
+        <h2>Response Schema</h2>
+        <p>
+          Every IPC request receives an <code>IpcResponse</code> JSON structure:
+        </p>
+
+        <div class="code-block">
+          <div class="code-bar">
+            <span>Rust Schema</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code>pub struct IpcResponse {
+    pub success: bool,
+    pub message: Option&lt;String&gt;,
+    pub error: Option&lt;String&gt;,
+    pub data: Option&lt;serde_json::Value&gt;,
+}</code></pre>
+        </div>
+      </section>
+
+      <section id="errors">
+        <h2>Error Handling</h2>
+        <p>
+          When <code>success</code> is <code>false</code>, the <code>error</code> field contains a descriptive failure string.
+        </p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Error Condition</th>
+                <th>Returned Message</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Duplicate ID</td>
+                <td><code>Hologram with ID '...' already exists!</code></td>
+              </tr>
+              <tr>
+                <td>World Not Loaded</td>
+                <td><code>World '...' is not loaded</code></td>
+              </tr>
+              <tr>
+                <td>Hologram Not Found</td>
+                <td><code>Hologram '...' not found</code></td>
+              </tr>
+              <tr>
+                <td>Malformed JSON</td>
+                <td><code>Invalid request payload: &lt;details&gt;</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Right TOC -->
+    <aside class="toc-sidebar">
+      <div class="toc-title">On this page</div>
+      <ul class="toc-list" id="toc-list">
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#quickstart">Integration Guide</a></li>
+        <li><a href="#tester">Interactive Tester</a></li>
+        <li><a href="#action-create">create</a></li>
+        <li><a href="#action-create-ram">create_ram</a></li>
+        <li><a href="#action-edit">edit</a></li>
+        <li><a href="#action-move">move</a></li>
+        <li><a href="#action-delete">delete</a></li>
+        <li><a href="#action-get">get</a></li>
+        <li><a href="#action-list">list</a></li>
+        <li><a href="#models">Billboard Types</a></li>
+        <li><a href="#responses">Response Schema</a></li>
+        <li><a href="#errors">Error Handling</a></li>
+      </ul>
+    </aside>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

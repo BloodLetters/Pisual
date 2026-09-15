@@ -20,10 +20,17 @@
 
 ## Roadmap / TODO
 
-- [ ] **Adding IPC**: Provide inter-process communication / plugin API for external services and integrations.
+- [x] **Adding IPC**: Provide inter-process communication / plugin API for external services and integrations.
 - [ ] **Internal Placeholders**: Support auto-refreshing lines and placeholder variables (e.g., player count, ping).
 - [ ] **Hologram Animations**: Cycle lines, color fades, and floating movement effects.
 - [ ] **Entity Icon Support**: Maybe?
+
+## Documentation
+
+📖 **Official IPC Documentation & Interactive Playground**: [https://bloodletters.github.io/Pisual/](https://bloodletters.github.io/Pisual/)
+
+Explore the full Inter-Plugin Communication (IPC) specification, generate JSON payloads live, and inspect Rust integration examples directly in your browser.
+
 
 ## Commands
 | Command | Description |

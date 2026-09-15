@@ -1,5 +1,6 @@
 pub mod commands;
 pub mod hologram;
+pub mod ipc;
 pub mod logger;
 pub mod manager;
 pub mod storage;
@@ -7,13 +8,25 @@ pub mod storage;
 pub use hologram::{BillboardType, Hologram, HologramData};
 pub use manager::HologramManager;
 
-use pumpkin_plugin_api::{Context, Plugin, PluginMetadata};
+use pumpkin_plugin_api::{Context, Plugin, PluginMetadata, Server};
 use std::sync::{OnceLock, RwLock};
 
 static MANAGER: OnceLock<RwLock<HologramManager>> = OnceLock::new();
+static SERVER: OnceLock<RwLock<Option<Server>>> = OnceLock::new();
 
 pub fn get_manager() -> &'static RwLock<HologramManager> {
     MANAGER.get().expect("HologramManager has not been initialized")
+}
+
+pub fn get_world(world_name: &str) -> Option<pumpkin_plugin_api::world::World> {
+    if let Some(lock) = SERVER.get()
+        && let Ok(guard) = lock.read()
+        && let Some(server) = guard.as_ref()
+    {
+        server.get_world_by_name(world_name)
+    } else {
+        None
+    }
 }
 
 struct Pisual;
@@ -47,8 +60,10 @@ impl Plugin for Pisual {
         let _ = MANAGER.set(manager);
 
         let server = context.get_server();
+        let _ = SERVER.set(RwLock::new(Some(server)));
+
         if let Ok(mut mgr) = get_manager().write() {
-            if let Err(e) = mgr.load_and_spawn(|name| server.get_world_by_name(name)) {
+            if let Err(e) = mgr.load_and_spawn(get_world) {
                 logger::warn(&format!("Notice while loading hologram data: {}", e));
             }
             logger::info(&format!(
@@ -72,8 +87,22 @@ impl Plugin for Pisual {
             logger::info("All hologram entities have been cleared from worlds.");
         }
 
+        if let Some(lock) = SERVER.get()
+            && let Ok(mut guard) = lock.write()
+        {
+            guard.take();
+        }
+
         logger::info("Pisual plugin unloaded. Goodbye!");
         Ok(())
+    }
+
+    fn handle_ipc_message(
+        &self,
+        sender: String,
+        message: Vec<u8>,
+    ) -> Result<Vec<u8>, String> {
+        ipc::handle_message(&sender, &message)
     }
 }
 

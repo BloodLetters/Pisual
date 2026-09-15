@@ -51,6 +51,8 @@ pub struct HologramData {
     pub view_range: f32,
     #[serde(default = "default_scale")]
     pub scale: (f32, f32, f32),
+    #[serde(default, skip_serializing)]
+    pub is_ram: bool,
 }
 
 fn default_true() -> bool {
@@ -83,6 +85,7 @@ impl HologramData {
             background: None,
             view_range: 64.0,
             scale: (1.0, 1.0, 1.0),
+            is_ram: false,
         }
     }
 }

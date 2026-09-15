@@ -53,20 +53,25 @@ impl HologramManager {
             return Err(format!("Hologram with ID '{id}' already exists!"));
         }
 
+        let is_ram = data.is_ram;
         let mut hologram = Hologram::new(data);
         if let Some(world) = world {
             hologram.spawn(world);
         }
 
         self.holograms.insert(id, hologram);
-        let _ = self.save();
+        if !is_ram {
+            let _ = self.save();
+        }
         Ok(())
     }
 
     pub fn delete_hologram(&mut self, id: &str) -> Result<HologramData, String> {
         if let Some(mut hologram) = self.holograms.remove(id) {
             hologram.despawn();
-            let _ = self.save();
+            if !hologram.data.is_ram {
+                let _ = self.save();
+            }
             Ok(hologram.data.clone())
         } else {
             Err(format!("Hologram with ID '{id}' was not found!"))
@@ -74,7 +79,12 @@ impl HologramManager {
     }
 
     pub fn save(&self) -> Result<(), String> {
-        let all_data: Vec<HologramData> = self.holograms.values().map(|h| h.data.clone()).collect();
+        let all_data: Vec<HologramData> = self
+            .holograms
+            .values()
+            .filter(|hologram| !hologram.data.is_ram)
+            .map(|hologram| hologram.data.clone())
+            .collect();
         storage::save_to_disk(&self.data_folder, &all_data)
     }
 
