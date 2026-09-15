@@ -39,8 +39,9 @@ Explore the full Inter-Plugin Communication (IPC) specification, generate JSON p
 | `/pisual delete <id>` | Remove an existing hologram |
 | `/pisual list` | List all existing holograms |
 | `/pisual lines <id> <add\|set\|remove>` | Manage hologram lines |
+| `/pisual visual <id> <entity\|item\|block\|offset\|scale\|faceplayer\|clear>` | Attach, adjust offset/scale, face player, or clear visual display |
 | `/pisual teleport <id> [here]` | Teleport to a hologram or bring it to you |
-| `/pisual save` / `/pisual load` | Save or reload holograms from storage |
+| `/pisual save` / `/pisual reload` | Save or reload holograms from storage |
 | `/pisual help` | Display in-game help menu |
 
 

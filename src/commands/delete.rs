@@ -1,4 +1,4 @@
-use super::utils::{get_string_arg, send_error, send_feedback};
+use super::utils::{get_string_arg, send_error, send_feedback, HologramStorageSuggestions};
 use pumpkin_plugin_api::{
     command::{ArgumentType, CommandError, CommandNode, CommandSender, ConsumedArgs, StringType},
     commands::CommandHandler,
@@ -17,7 +17,7 @@ impl CommandHandler for DeleteCommand {
         let id = match get_string_arg(&args, "id") {
             Some(id) if !id.trim().is_empty() => id,
             _ => {
-                send_error(&sender, "Please specify a hologram ID to delete! Usage: /holo delete <id>");
+                send_error(&sender, "Usage: /holo delete <id>");
                 return Ok(0);
             }
         };
@@ -52,6 +52,7 @@ pub fn build_node() -> CommandNode {
         .execute(DeleteCommand)
         .then(
             CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+                .suggest(HologramStorageSuggestions)
                 .execute(DeleteCommand),
         )
 }
@@ -61,6 +62,7 @@ pub fn build_remove_node() -> CommandNode {
         .execute(DeleteCommand)
         .then(
             CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+                .suggest(HologramStorageSuggestions)
                 .execute(DeleteCommand),
         )
 }

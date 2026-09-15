@@ -1,4 +1,6 @@
-use super::utils::{get_int_arg, get_string_arg, send_error, send_feedback};
+use super::utils::{
+    get_int_arg, get_string_arg, send_error, send_feedback, HologramStorageSuggestions,
+};
 use pumpkin_plugin_api::{
     command::{ArgumentType, CommandError, CommandNode, CommandSender, ConsumedArgs, StringType},
     commands::CommandHandler,
@@ -194,6 +196,7 @@ pub fn build_addline_node() -> CommandNode {
         .execute(AddLineCommand)
         .then(
             CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+                .suggest(HologramStorageSuggestions)
                 .execute(AddLineCommand)
                 .then(
                     CommandNode::argument("text", &ArgumentType::String(StringType::Greedy))
@@ -207,6 +210,7 @@ pub fn build_setline_node() -> CommandNode {
         .execute(SetLineCommand)
         .then(
             CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+                .suggest(HologramStorageSuggestions)
                 .execute(SetLineCommand)
                 .then(
                     CommandNode::argument("index", &ArgumentType::Integer((Some(1), None)))
@@ -224,6 +228,7 @@ pub fn build_removeline_node() -> CommandNode {
         .execute(RemoveLineCommand)
         .then(
             CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+                .suggest(HologramStorageSuggestions)
                 .execute(RemoveLineCommand)
                 .then(
                     CommandNode::argument("index", &ArgumentType::Integer((Some(1), None)))

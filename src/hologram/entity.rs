@@ -46,15 +46,26 @@ pub fn calculate_visual_position(
     base_position: (f64, f64, f64),
     data: &HologramData,
 ) -> (f64, f64, f64) {
-    let offset_y = data.visual.as_ref().map_or(0.6, |config| config.offset_y);
-    (base_position.0, base_position.1 + offset_y, base_position.2)
+    if let Some(configuration) = &data.visual {
+        (
+            base_position.0 + configuration.offset_x,
+            base_position.1 + configuration.offset_y,
+            base_position.2 + configuration.offset_z,
+        )
+    } else {
+        (
+            base_position.0 - 0.1,
+            base_position.1 + 0.8,
+            base_position.2 - 0.1,
+        )
+    }
 }
 
 pub fn spawn_visual(world: &World, data: &HologramData) -> Option<Entity> {
     let visual = data.visual.as_ref()?;
     let visual_position = calculate_visual_position(data.position, data);
 
-    match &visual.visual_type {
+    let spawned_entity = match &visual.visual_type {
         VisualType::Item { item } => {
             let entity = world.spawn_entity(EntityType::ItemDisplay, visual_position);
             if let Some(item_display) = entity.as_item_display() {
@@ -89,7 +100,13 @@ pub fn spawn_visual(world: &World, data: &HologramData) -> Option<Entity> {
             apply_frozen_living_properties(&entity);
             Some(entity)
         }
+    }?;
+
+    if let Some((yaw, pitch)) = visual.rotation {
+        spawned_entity.set_rotation(yaw, pitch);
     }
+
+    Some(spawned_entity)
 }
 
 fn apply_item_properties(

@@ -5,9 +5,9 @@ use pumpkin_plugin_api::{
     Server,
 };
 
-pub struct LoadCommand;
+pub struct ReloadCommand;
 
-impl CommandHandler for LoadCommand {
+impl CommandHandler for ReloadCommand {
     fn handle(
         &self,
         sender: CommandSender,
@@ -30,14 +30,14 @@ impl CommandHandler for LoadCommand {
                 send_feedback(
                     &sender,
                     &format!(
-                        "&aSuccessfully loaded &e{}&a hologram(s) and spawned them in their worlds!",
+                        "&aSuccessfully reloaded &e{}&a hologram(s) and spawned them in their worlds!",
                         mgr.count()
                     ),
                 );
                 Ok(1)
             }
             Err(e) => {
-                send_error(&sender, &format!("Failed to load holograms from disk: {e}"));
+                send_error(&sender, &format!("Failed to reload holograms from disk: {e}"));
                 Ok(0)
             }
         }
@@ -45,9 +45,5 @@ impl CommandHandler for LoadCommand {
 }
 
 pub fn build_node() -> CommandNode {
-    CommandNode::literal("load").execute(LoadCommand)
-}
-
-pub fn build_reload_node() -> CommandNode {
-    CommandNode::literal("reload").execute(LoadCommand)
+    CommandNode::literal("reload").execute(ReloadCommand)
 }

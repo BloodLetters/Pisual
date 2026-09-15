@@ -1,4 +1,6 @@
-use super::utils::{get_string_arg, is_player, send_error, send_feedback};
+use super::utils::{
+    get_string_arg, is_player, send_error, send_feedback, HologramStorageSuggestions,
+};
 use pumpkin_plugin_api::{
     command::{ArgumentType, CommandError, CommandNode, CommandSender, ConsumedArgs, StringType},
     commands::CommandHandler,
@@ -120,6 +122,7 @@ pub fn build_tp_node() -> CommandNode {
         .execute(TeleportCommand)
         .then(
             CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+                .suggest(HologramStorageSuggestions)
                 .execute(TeleportCommand),
         )
 }
@@ -129,6 +132,7 @@ pub fn build_movehere_node() -> CommandNode {
         .execute(MoveHereCommand)
         .then(
             CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+                .suggest(HologramStorageSuggestions)
                 .execute(MoveHereCommand),
         )
 }
@@ -138,6 +142,7 @@ pub fn build_tphere_node() -> CommandNode {
         .execute(MoveHereCommand)
         .then(
             CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+                .suggest(HologramStorageSuggestions)
                 .execute(MoveHereCommand),
         )
 }

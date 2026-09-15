@@ -43,18 +43,27 @@ pub enum VisualType {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct VisualConfig {
     pub visual_type: VisualType,
-    #[serde(default = "default_offset")]
+    #[serde(default = "default_offset_x")]
+    pub offset_x: f64,
+    #[serde(default = "default_offset_y")]
     pub offset_y: f64,
+    #[serde(default = "default_offset_z")]
+    pub offset_z: f64,
     #[serde(default = "default_scale")]
     pub scale: (f32, f32, f32),
+    #[serde(default)]
+    pub rotation: Option<(f32, f32)>,
 }
 
 impl VisualConfig {
     pub fn item(item: impl Into<String>) -> Self {
         Self {
             visual_type: VisualType::Item { item: item.into() },
-            offset_y: default_offset(),
+            offset_x: default_offset_x(),
+            offset_y: default_offset_y(),
+            offset_z: default_offset_z(),
             scale: default_scale(),
+            rotation: None,
         }
     }
 
@@ -63,8 +72,11 @@ impl VisualConfig {
             visual_type: VisualType::Block {
                 block: block.into(),
             },
-            offset_y: default_offset(),
+            offset_x: default_offset_x(),
+            offset_y: default_offset_y(),
+            offset_z: default_offset_z(),
             scale: default_scale(),
+            rotation: None,
         }
     }
 
@@ -73,8 +85,11 @@ impl VisualConfig {
             visual_type: VisualType::Entity {
                 entity_type: entity_type.into(),
             },
-            offset_y: default_offset(),
+            offset_x: default_offset_x(),
+            offset_y: default_offset_y(),
+            offset_z: default_offset_z(),
             scale: default_scale(),
+            rotation: None,
         }
     }
 }
@@ -112,11 +127,19 @@ fn default_range() -> f32 {
 }
 
 fn default_scale() -> (f32, f32, f32) {
-    (1.0, 1.0, 1.0)
+    (0.3, 0.3, 0.3)
 }
 
-fn default_offset() -> f64 {
-    0.6
+fn default_offset_x() -> f64 {
+    -0.1
+}
+
+fn default_offset_y() -> f64 {
+    0.8
+}
+
+fn default_offset_z() -> f64 {
+    -0.1
 }
 
 impl HologramData {

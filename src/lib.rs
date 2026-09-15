@@ -1,4 +1,5 @@
 pub mod commands;
+pub mod events;
 pub mod hologram;
 pub mod ipc;
 pub mod logger;
@@ -73,6 +74,7 @@ impl Plugin for Pisual {
         }
 
         commands::register_commands(&context);
+        events::register_event_listeners(&context)?;
 
         Ok(())
     }

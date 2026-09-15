@@ -23,7 +23,8 @@ impl CommandHandler for HelpCommand {
         send_feedback(&sender, "&e/holo removeline <id> <index> &8- &7Remove a specific line");
         send_feedback(&sender, "&e/holo tp <id> &8- &7Teleport to a hologram");
         send_feedback(&sender, "&e/holo movehere <id> &8- &7Move a hologram to your position");
-        send_feedback(&sender, "&e/holo load &8- &7Reload and respawn all holograms from disk");
+        send_feedback(&sender, "&e/holo visual <id> <entity|item|block|offset|scale|faceplayer|clear> &8- &7Manage visual");
+        send_feedback(&sender, "&e/holo reload &8- &7Reload and respawn all holograms from disk");
         send_feedback(&sender, "&e/holo save &8- &7Save all holograms to disk storage");
         send_feedback(&sender, "&e/holo help &8- &7Display this help message");
         Ok(1)

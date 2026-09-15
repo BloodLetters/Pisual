@@ -3,10 +3,11 @@ pub mod delete;
 pub mod help;
 pub mod lines;
 pub mod list;
-pub mod load;
+pub mod reload;
 pub mod save;
 pub mod teleport;
 pub mod utils;
+pub mod visual;
 
 use pumpkin_plugin_api::{
     command::Command,
@@ -37,8 +38,7 @@ pub fn register_commands(context: &Context) {
     .then(create::build_node())
     .then(delete::build_node())
     .then(delete::build_remove_node())
-    .then(load::build_node())
-    .then(load::build_reload_node())
+    .then(reload::build_node())
     .then(list::build_node())
     .then(lines::build_addline_node())
     .then(lines::build_setline_node())
@@ -46,6 +46,7 @@ pub fn register_commands(context: &Context) {
     .then(teleport::build_tp_node())
     .then(teleport::build_movehere_node())
     .then(teleport::build_tphere_node())
+    .then(visual::build_node())
     .then(save::build_node())
     .then(help::build_node())
     .execute(help::HelpCommand);
