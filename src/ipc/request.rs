@@ -1,4 +1,4 @@
-use crate::hologram::BillboardType;
+use crate::hologram::{BillboardType, VisualConfig};
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -19,6 +19,8 @@ pub enum IpcRequest {
         see_through: Option<bool>,
         #[serde(default)]
         scale: Option<(f32, f32, f32)>,
+        #[serde(default)]
+        visual: Option<VisualConfig>,
     },
     CreateRam {
         id: String,
@@ -33,6 +35,8 @@ pub enum IpcRequest {
         see_through: Option<bool>,
         #[serde(default)]
         scale: Option<(f32, f32, f32)>,
+        #[serde(default)]
+        visual: Option<VisualConfig>,
     },
     Edit {
         id: String,
@@ -46,6 +50,10 @@ pub enum IpcRequest {
         see_through: Option<bool>,
         #[serde(default)]
         scale: Option<(f32, f32, f32)>,
+        #[serde(default)]
+        visual: Option<VisualConfig>,
+        #[serde(default)]
+        clear_visual: Option<bool>,
     },
     Move {
         id: String,

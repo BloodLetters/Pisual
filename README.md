@@ -23,7 +23,7 @@
 - [x] **Adding IPC**: Provide inter-process communication / plugin API for external services and integrations.
 - [ ] **Internal Placeholders**: Support auto-refreshing lines and placeholder variables (e.g., player count, ping).
 - [ ] **Hologram Animations**: Cycle lines, color fades, and floating movement effects.
-- [ ] **Entity Icon Support**: Maybe?
+- [x] **Entity Icon Support**: Showing entity, item and block into hologram
 
 ## Documentation
 

@@ -27,6 +27,7 @@ fn process_request(request: IpcRequest) -> IpcResponse {
             shadow,
             see_through,
             scale,
+            visual,
         } => {
             let mut manager = match crate::get_manager().write() {
                 Ok(guard) => guard,
@@ -48,6 +49,7 @@ fn process_request(request: IpcRequest) -> IpcResponse {
             if let Some(custom_scale) = scale {
                 data.scale = custom_scale;
             }
+            data.visual = visual;
 
             match manager.create_hologram(data, world_instance.as_ref()) {
                 Ok(_) => IpcResponse::success(format!("Hologram '{id}' created successfully")),
@@ -63,6 +65,7 @@ fn process_request(request: IpcRequest) -> IpcResponse {
             shadow,
             see_through,
             scale,
+            visual,
         } => {
             let mut manager = match crate::get_manager().write() {
                 Ok(guard) => guard,
@@ -84,6 +87,7 @@ fn process_request(request: IpcRequest) -> IpcResponse {
             if let Some(custom_scale) = scale {
                 data.scale = custom_scale;
             }
+            data.visual = visual;
 
             match manager.create_hologram(data, world_instance.as_ref()) {
                 Ok(_) => IpcResponse::success(format!("hologram '{id}' created successfully")),
@@ -97,6 +101,8 @@ fn process_request(request: IpcRequest) -> IpcResponse {
             shadow,
             see_through,
             scale,
+            visual,
+            clear_visual,
         } => {
             let mut manager = match crate::get_manager().write() {
                 Ok(guard) => guard,
@@ -122,6 +128,13 @@ fn process_request(request: IpcRequest) -> IpcResponse {
             }
             if let Some(custom_scale) = scale {
                 hologram.set_scale(custom_scale);
+            }
+            if clear_visual == Some(true) {
+                hologram.remove_visual();
+            } else if visual.is_some() {
+                let world_name = hologram.data.world_name.clone();
+                let world_instance = crate::get_world(&world_name);
+                hologram.set_visual(visual, world_instance.as_ref());
             }
 
             let _ = manager.save();

@@ -34,8 +34,6 @@ pub fn register_commands(context: &Context) {
         ],
         "Manage Pisual holograms",
     )
-    
-    // Cmd & Args
     .then(create::build_node())
     .then(delete::build_node())
     .then(delete::build_remove_node())

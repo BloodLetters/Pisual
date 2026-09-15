@@ -2,7 +2,6 @@ use pumpkin_plugin_api::display::BillboardMode;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
-#[serde(rename_all = "snake_case")]
 pub enum BillboardType {
     #[default]
     Center,
@@ -34,6 +33,53 @@ impl From<BillboardMode> for BillboardType {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(tag = "type", rename_all = "snake_case")]
+pub enum VisualType {
+    Item { item: String },
+    Block { block: String },
+    Entity { entity_type: String },
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct VisualConfig {
+    pub visual_type: VisualType,
+    #[serde(default = "default_offset")]
+    pub offset_y: f64,
+    #[serde(default = "default_scale")]
+    pub scale: (f32, f32, f32),
+}
+
+impl VisualConfig {
+    pub fn item(item: impl Into<String>) -> Self {
+        Self {
+            visual_type: VisualType::Item { item: item.into() },
+            offset_y: default_offset(),
+            scale: default_scale(),
+        }
+    }
+
+    pub fn block(block: impl Into<String>) -> Self {
+        Self {
+            visual_type: VisualType::Block {
+                block: block.into(),
+            },
+            offset_y: default_offset(),
+            scale: default_scale(),
+        }
+    }
+
+    pub fn entity(entity_type: impl Into<String>) -> Self {
+        Self {
+            visual_type: VisualType::Entity {
+                entity_type: entity_type.into(),
+            },
+            offset_y: default_offset(),
+            scale: default_scale(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct HologramData {
     pub id: String,
     pub world_name: String,
@@ -51,6 +97,8 @@ pub struct HologramData {
     pub view_range: f32,
     #[serde(default = "default_scale")]
     pub scale: (f32, f32, f32),
+    #[serde(default)]
+    pub visual: Option<VisualConfig>,
     #[serde(default, skip_serializing)]
     pub is_ram: bool,
 }
@@ -65,6 +113,10 @@ fn default_range() -> f32 {
 
 fn default_scale() -> (f32, f32, f32) {
     (1.0, 1.0, 1.0)
+}
+
+fn default_offset() -> f64 {
+    0.6
 }
 
 impl HologramData {
@@ -85,6 +137,7 @@ impl HologramData {
             background: None,
             view_range: 64.0,
             scale: (1.0, 1.0, 1.0),
+            visual: None,
             is_ram: false,
         }
     }
