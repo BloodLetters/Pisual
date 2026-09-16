@@ -44,6 +44,14 @@ impl CommandHandler for CreateCommand {
             }
         };
 
+        if !crate::storage::is_valid_id(&id) {
+            send_error(
+                &sender,
+                "&cInvalid hologram ID! ID must be 1-64 characters using letters, numbers, underscores, and hyphens.",
+            );
+            return Ok(0);
+        }
+
         if mgr.contains(&id) {
             send_error(&sender, &format!("Hologram with ID '&e{id}&c' already exists!"));
             return Ok(0);

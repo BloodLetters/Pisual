@@ -49,20 +49,27 @@ impl HologramManager {
         world: Option<&World>,
     ) -> Result<(), String> {
         let id = data.id.clone();
+        if !storage::is_valid_id(&id) {
+            return Err(format!(
+                "Invalid hologram ID '{id}'! ID must be 1-64 characters using letters, numbers, underscores, and hyphens."
+            ));
+        }
+
         if self.holograms.contains_key(&id) {
             return Err(format!("Hologram with ID '{id}' already exists!"));
         }
 
         let is_ram = data.is_ram;
+        if !is_ram {
+            storage::save_hologram(&self.data_folder, &data)?;
+        }
+
         let mut hologram = Hologram::new(data);
         if let Some(world) = world {
             hologram.spawn(world);
         }
 
         self.holograms.insert(id, hologram);
-        if !is_ram {
-            let _ = self.save();
-        }
         Ok(())
     }
 
@@ -70,9 +77,20 @@ impl HologramManager {
         if let Some(mut hologram) = self.holograms.remove(id) {
             hologram.despawn();
             if !hologram.data.is_ram {
-                let _ = self.save();
+                let _ = storage::delete_hologram_file(&self.data_folder, id);
             }
             Ok(hologram.data.clone())
+        } else {
+            Err(format!("Hologram with ID '{id}' was not found!"))
+        }
+    }
+
+    pub fn save_hologram(&self, id: &str) -> Result<(), String> {
+        if let Some(hologram) = self.holograms.get(id) {
+            if !hologram.data.is_ram {
+                storage::save_hologram(&self.data_folder, &hologram.data)?;
+            }
+            Ok(())
         } else {
             Err(format!("Hologram with ID '{id}' was not found!"))
         }

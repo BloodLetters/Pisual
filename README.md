@@ -21,9 +21,18 @@
 ## Roadmap / TODO
 
 - [x] **Adding IPC**: Provide inter-process communication / plugin API for external services and integrations.
-- [ ] **Internal Placeholders**: Support auto-refreshing lines and placeholder variables (e.g., player count, ping).
-- [ ] **Hologram Animations**: Cycle lines, color fades, and floating movement effects.
-- [x] **Entity Icon Support**: Showing entity, item and block into hologram
+- [x] **Entity Icon Support**: Showing entity, item, and block displays attached to holograms.
+- [x] **Hologram Animations**: Cycle lines, color fades, and floating movement effects.
+- [x] **Modular Storage Architecture**: Directory-based per-hologram storage (`holograms/<id>/data.json`) with fault tolerance and legacy migration.
+- [ ] **Internal Placeholders & Auto-Refresh**: Support dynamic placeholder variables (e.g., `{player}`, `{online}`, `{max_players}`, `{ping}`, `{tps}`) with configurable refresh intervals.
+- [ ] **Interactive Click Actions**: Execute player/console commands, send chat messages, or play sounds when a player clicks/interacts with a hologram.
+- [ ] **Per-Player Personalization & Conditional Visibility**: Restrict hologram visibility by permission, distance, or player conditions, with per-player placeholder evaluation.
+- [ ] **Hologram Pages & Slideshows**: Multi-page holograms with automated rotation timers and interactive next/previous page click navigation.
+- [ ] **Rich Color Formatting & Gradients**: Full hex/RGB color code support (`&#RRGGBB`), multi-color gradients, and rainbow text animations.
+- [ ] **Native Display Interpolation**: Leverage Minecraft display entity interpolation for buttery-smooth rotation, bobbing physics, and scale transitions.
+- [ ] **Ambient Particle Effects**: Attach customizable particle effects (e.g., rings, swirls, sparkles, halos) around holograms and visual items.
+- [ ] **Hologram Templates & Presets**: Pre-configured templates for leaderboards, welcome boards, server stats, and shop showcases.
+- [ ] **In-Game Interactive Alignment Tool**: Fine-tune hologram heights, line spacings, and item offsets interactively with commands or tools.
 
 ## Documentation
 

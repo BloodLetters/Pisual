@@ -1,4 +1,4 @@
-use pumpkin_plugin_api::logging::{log, LogLevel};
+use pumpkin_plugin_api::logging::{LogLevel, log};
 
 pub fn info(message: &str) {
     log(LogLevel::Info, message);
