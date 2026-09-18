@@ -4,12 +4,13 @@ pub mod hologram;
 pub mod ipc;
 pub mod logger;
 pub mod manager;
+pub mod placeholder;
 pub mod storage;
 
 pub use hologram::{BillboardType, Hologram, HologramData};
 pub use manager::HologramManager;
 
-use pumpkin_plugin_api::{Context, Plugin, PluginMetadata, Server};
+use pumpkin_plugin_api::{scheduler::SchedulerExt, Context, Plugin, PluginMetadata, Server};
 use std::sync::{OnceLock, RwLock};
 
 static MANAGER: OnceLock<RwLock<HologramManager>> = OnceLock::new();
@@ -25,6 +26,17 @@ pub fn get_world(world_name: &str) -> Option<pumpkin_plugin_api::world::World> {
         && let Some(server) = guard.as_ref()
     {
         server.get_world_by_name(world_name)
+    } else {
+        None
+    }
+}
+
+pub fn with_server<R, F: FnOnce(&Server) -> R>(f: F) -> Option<R> {
+    if let Some(lock) = SERVER.get()
+        && let Ok(guard) = lock.read()
+        && let Some(server) = guard.as_ref()
+    {
+        Some(f(server))
     } else {
         None
     }
@@ -75,6 +87,12 @@ impl Plugin for Pisual {
 
         commands::register_commands(&context);
         events::register_event_listeners(&context)?;
+
+        context.schedule_repeating_task(10, 10, |server| {
+            if let Ok(mut mgr) = get_manager().write() {
+                mgr.tick(&server, 10);
+            }
+        });
 
         Ok(())
     }

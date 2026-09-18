@@ -9,11 +9,55 @@ use pumpkin_plugin_api::{
     world::{Block, Entity, World},
 };
 
+pub fn render_lines(data: &HologramData, world: Option<&World>) -> String {
+    if data.lines.is_empty() {
+        return String::new();
+    }
+    crate::with_server(|server| {
+        let ctx = crate::placeholder::PlaceholderContext {
+            server: Some(server),
+            world,
+            hologram: Some(data),
+            player: None,
+        };
+        let lines: Vec<String> = data
+            .lines
+            .iter()
+            .map(|l| crate::placeholder::resolve(l, &ctx))
+            .collect();
+        lines.join("\n")
+    })
+    .unwrap_or_else(|| {
+        let ctx = crate::placeholder::PlaceholderContext {
+            server: None,
+            world,
+            hologram: Some(data),
+            player: None,
+        };
+        let lines: Vec<String> = data
+            .lines
+            .iter()
+            .map(|l| crate::placeholder::resolve(l, &ctx))
+            .collect();
+        lines.join("\n")
+    })
+}
+
+pub fn update_text(entity: &Entity, text: &str) -> bool {
+    if let Some(text_display) = entity.as_text_display() {
+        let component = TextComponent::from_legacy_string_with_code(text, '&');
+        text_display.set_text(component);
+        true
+    } else {
+        false
+    }
+}
+
 pub fn spawn_display(world: &World, data: &HologramData) -> Option<Entity> {
     let entity = world.spawn_entity(EntityType::TextDisplay, data.position);
 
     if let Some(text_display) = entity.as_text_display() {
-        apply_properties(&text_display, data);
+        apply_properties(&text_display, data, Some(world));
         Some(entity)
     } else {
         crate::logger::error(&format!(
@@ -25,9 +69,9 @@ pub fn spawn_display(world: &World, data: &HologramData) -> Option<Entity> {
     }
 }
 
-pub fn update_display(entity: &Entity, data: &HologramData) -> bool {
+pub fn update_display(entity: &Entity, data: &HologramData, world: Option<&World>) -> bool {
     if let Some(text_display) = entity.as_text_display() {
-        apply_properties(&text_display, data);
+        apply_properties(&text_display, data, world);
         true
     } else {
         false
@@ -283,12 +327,9 @@ pub fn parse_entity_type(name: &str) -> Option<EntityType> {
 fn apply_properties(
     text_display: &pumpkin_plugin_api::display::TextDisplayEntity,
     data: &HologramData,
+    world: Option<&World>,
 ) {
-    let joined_text = if data.lines.is_empty() {
-        String::new()
-    } else {
-        data.lines.join("\n")
-    };
+    let joined_text = render_lines(data, world);
     let component = TextComponent::from_legacy_string_with_code(&joined_text, '&');
     text_display.set_text(component);
 

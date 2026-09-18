@@ -114,6 +114,8 @@ pub struct HologramData {
     pub scale: (f32, f32, f32),
     #[serde(default)]
     pub visual: Option<VisualConfig>,
+    #[serde(default)]
+    pub refresh_interval: Option<u64>,
     #[serde(default, skip_serializing)]
     pub is_ram: bool,
 }
@@ -161,6 +163,7 @@ impl HologramData {
             view_range: 64.0,
             scale: (1.0, 1.0, 1.0),
             visual: None,
+            refresh_interval: None,
             is_ram: false,
         }
     }

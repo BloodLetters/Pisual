@@ -158,4 +158,46 @@ impl HologramManager {
             }
         }
     }
+
+    pub fn set_refresh_interval(&mut self, id: &str, interval: Option<u64>) -> Result<(), String> {
+        if let Some(hologram) = self.holograms.get_mut(id) {
+            hologram.set_refresh_interval(interval);
+            if !hologram.data.is_ram {
+                storage::save_hologram(&self.data_folder, &hologram.data)?;
+            }
+            Ok(())
+        } else {
+            Err(format!("Hologram with ID '{id}' was not found!"))
+        }
+    }
+
+    pub fn tick(&mut self, server: &pumpkin_plugin_api::Server, tick_step: u64) {
+        for hologram in self.holograms.values_mut() {
+            if !hologram.is_spawned() {
+                continue;
+            }
+
+            let has_placeholders = hologram.has_placeholders();
+            let interval = match hologram.data.refresh_interval {
+                Some(0) => continue,
+                Some(n) => n,
+                None => {
+                    if has_placeholders {
+                        20
+                    } else {
+                        continue;
+                    }
+                }
+            };
+
+            hologram.tick_counter += tick_step;
+            if hologram.tick_counter < interval {
+                continue;
+            }
+            hologram.tick_counter = 0;
+
+            let world = server.get_world_by_name(&hologram.data.world_name);
+            hologram.refresh_text(world.as_ref());
+        }
+    }
 }

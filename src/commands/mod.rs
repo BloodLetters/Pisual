@@ -1,6 +1,7 @@
 pub mod create;
 pub mod delete;
 pub mod help;
+pub mod interval;
 pub mod lines;
 pub mod list;
 pub mod reload;
@@ -43,6 +44,7 @@ pub fn register_commands(context: &Context) {
     .then(lines::build_addline_node())
     .then(lines::build_setline_node())
     .then(lines::build_removeline_node())
+    .then(interval::build_node())
     .then(teleport::build_tp_node())
     .then(teleport::build_movehere_node())
     .then(teleport::build_tphere_node())

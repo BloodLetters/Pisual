@@ -21,6 +21,8 @@ pub enum IpcRequest {
         scale: Option<(f32, f32, f32)>,
         #[serde(default)]
         visual: Option<VisualConfig>,
+        #[serde(default)]
+        refresh_interval: Option<u64>,
     },
     CreateRam {
         id: String,
@@ -37,6 +39,8 @@ pub enum IpcRequest {
         scale: Option<(f32, f32, f32)>,
         #[serde(default)]
         visual: Option<VisualConfig>,
+        #[serde(default)]
+        refresh_interval: Option<u64>,
     },
     Edit {
         id: String,
@@ -54,6 +58,8 @@ pub enum IpcRequest {
         visual: Option<VisualConfig>,
         #[serde(default)]
         clear_visual: Option<bool>,
+        #[serde(default)]
+        refresh_interval: Option<u64>,
     },
     Move {
         id: String,

@@ -21,6 +21,7 @@ impl CommandHandler for HelpCommand {
         send_feedback(&sender, "&e/holo addline <id> <text> &8- &7Add a new line of text");
         send_feedback(&sender, "&e/holo setline <id> <index> <text> &8- &7Edit a specific line (1-indexed)");
         send_feedback(&sender, "&e/holo removeline <id> <index> &8- &7Remove a specific line");
+        send_feedback(&sender, "&e/holo interval <id> [ticks] &8- &7Configure or view auto-refresh interval");
         send_feedback(&sender, "&e/holo tp <id> &8- &7Teleport to a hologram");
         send_feedback(&sender, "&e/holo movehere <id> &8- &7Move a hologram to your position");
         send_feedback(&sender, "&e/holo visual <id> <entity|item|block|offset|scale|faceplayer|clear> &8- &7Manage visual");

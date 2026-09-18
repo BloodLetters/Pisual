@@ -28,6 +28,7 @@ fn process_request(request: IpcRequest) -> IpcResponse {
             see_through,
             scale,
             visual,
+            refresh_interval,
         } => {
             let mut manager = match crate::get_manager().write() {
                 Ok(guard) => guard,
@@ -50,6 +51,7 @@ fn process_request(request: IpcRequest) -> IpcResponse {
                 data.scale = custom_scale;
             }
             data.visual = visual;
+            data.refresh_interval = refresh_interval;
 
             match manager.create_hologram(data, world_instance.as_ref()) {
                 Ok(_) => IpcResponse::success(format!("Hologram '{id}' created successfully")),
@@ -66,6 +68,7 @@ fn process_request(request: IpcRequest) -> IpcResponse {
             see_through,
             scale,
             visual,
+            refresh_interval,
         } => {
             let mut manager = match crate::get_manager().write() {
                 Ok(guard) => guard,
@@ -88,6 +91,7 @@ fn process_request(request: IpcRequest) -> IpcResponse {
                 data.scale = custom_scale;
             }
             data.visual = visual;
+            data.refresh_interval = refresh_interval;
 
             match manager.create_hologram(data, world_instance.as_ref()) {
                 Ok(_) => IpcResponse::success(format!("hologram '{id}' created successfully")),
@@ -103,6 +107,7 @@ fn process_request(request: IpcRequest) -> IpcResponse {
             scale,
             visual,
             clear_visual,
+            refresh_interval,
         } => {
             let mut manager = match crate::get_manager().write() {
                 Ok(guard) => guard,
@@ -135,6 +140,9 @@ fn process_request(request: IpcRequest) -> IpcResponse {
                 let world_name = hologram.data.world_name.clone();
                 let world_instance = crate::get_world(&world_name);
                 hologram.set_visual(visual, world_instance.as_ref());
+            }
+            if refresh_interval.is_some() {
+                hologram.set_refresh_interval(refresh_interval);
             }
 
             let _ = manager.save();
