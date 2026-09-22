@@ -31,8 +31,8 @@ jobs:
       - name: Run Cargo Clippy
         run: cargo clippy --target wasm32-wasip2 --all-targets -- -D warnings
 
-  nightly:
-    name: Nightly Release
+  alpha:
+    name: Alpha Release
     runs-on: ubuntu-latest
     needs: clippy
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
@@ -55,18 +55,18 @@ jobs:
       - name: Build Release
         run: cargo build --target wasm32-wasip2 --release
 
-      - name: Update Nightly Git Tag
+      - name: Update Alpha Git Tag
         run: |
-          git tag -f nightly
-          git push -f origin nightly
+          git tag -f alpha
+          git push -f origin alpha
 
-      - name: Publish Nightly Release
+      - name: Publish Alpha Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: nightly
-          name: "Pisual Nightly Build"
+          tag_name: alpha
+          name: "Pisual Alpha Build"
           body: |
-            Automated nightly build for **Pisual**.
+            Automated alpha build for **Pisual**.
             - **Commit**: [${{ github.sha }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
             - **Branch**: `${{ github.ref_name }}`
             - **Build Date**: ${{ github.event.head_commit.timestamp }}
