@@ -1,8 +1,8 @@
 use super::utils::{send_error, send_feedback};
 use pumpkin_plugin_api::{
+    Server,
     command::{CommandError, CommandNode, CommandSender, ConsumedArgs},
     commands::CommandHandler,
-    Server,
 };
 
 pub struct ReloadCommand;
@@ -37,7 +37,10 @@ impl CommandHandler for ReloadCommand {
                 Ok(1)
             }
             Err(e) => {
-                send_error(&sender, &format!("Failed to reload holograms from disk: {e}"));
+                send_error(
+                    &sender,
+                    &format!("Failed to reload holograms from disk: {e}"),
+                );
                 Ok(0)
             }
         }

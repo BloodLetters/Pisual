@@ -123,15 +123,17 @@ impl HologramManager {
 
             if let Some(world) = resolve_world(&world_name) {
                 if hologram.spawn(&world) {
-                    crate::logger::info(&format!("Hologram '{}' spawned in world '{}'", id, world_name));
+                    crate::logger::info(&format!(
+                        "Hologram '{}' spawned in world '{}'",
+                        id, world_name
+                    ));
                 } else {
                     crate::logger::warn(&format!("Failed to spawn entity for hologram '{}'", id));
                 }
             } else {
                 crate::logger::warn(&format!(
                     "World '{}' for hologram '{}' is not loaded yet. Hologram retained in memory.",
-                    world_name,
-                    id
+                    world_name, id
                 ));
             }
 

@@ -1,9 +1,9 @@
 use super::utils::{get_string_arg, is_player, send_error, send_feedback};
 use crate::hologram::HologramData;
 use pumpkin_plugin_api::{
+    Server,
     command::{ArgumentType, CommandError, CommandNode, CommandSender, ConsumedArgs, StringType},
     commands::CommandHandler,
-    Server,
 };
 
 pub struct CreateCommand;
@@ -53,7 +53,10 @@ impl CommandHandler for CreateCommand {
         }
 
         if mgr.contains(&id) {
-            send_error(&sender, &format!("Hologram with ID '&e{id}&c' already exists!"));
+            send_error(
+                &sender,
+                &format!("Hologram with ID '&e{id}&c' already exists!"),
+            );
             return Ok(0);
         }
 
@@ -74,14 +77,12 @@ impl CommandHandler for CreateCommand {
 }
 
 pub fn build_node() -> CommandNode {
-    CommandNode::literal("create")
-        .execute(CreateCommand)
-        .then(
-            CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
-                .execute(CreateCommand)
-                .then(
-                    CommandNode::argument("text", &ArgumentType::String(StringType::Greedy))
-                        .execute(CreateCommand),
-                ),
-        )
+    CommandNode::literal("create").execute(CreateCommand).then(
+        CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+            .execute(CreateCommand)
+            .then(
+                CommandNode::argument("text", &ArgumentType::String(StringType::Greedy))
+                    .execute(CreateCommand),
+            ),
+    )
 }

@@ -1,10 +1,10 @@
 use super::utils::{
-    get_string_arg, is_player, send_error, send_feedback, HologramStorageSuggestions,
+    HologramStorageSuggestions, get_string_arg, is_player, send_error, send_feedback,
 };
 use pumpkin_plugin_api::{
+    Server,
     command::{ArgumentType, CommandError, CommandNode, CommandSender, ConsumedArgs, StringType},
     commands::CommandHandler,
-    Server,
 };
 
 pub struct TeleportCommand;
@@ -51,7 +51,9 @@ impl CommandHandler for TeleportCommand {
             None => {
                 send_error(
                     &sender,
-                    &format!("World '&e{world_name}&c' containing hologram '&e{id}&c' is not loaded!"),
+                    &format!(
+                        "World '&e{world_name}&c' containing hologram '&e{id}&c' is not loaded!"
+                    ),
                 );
                 return Ok(0);
             }
@@ -118,13 +120,11 @@ impl CommandHandler for MoveHereCommand {
 }
 
 pub fn build_tp_node() -> CommandNode {
-    CommandNode::literal("tp")
-        .execute(TeleportCommand)
-        .then(
-            CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
-                .suggest(HologramStorageSuggestions)
-                .execute(TeleportCommand),
-        )
+    CommandNode::literal("tp").execute(TeleportCommand).then(
+        CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+            .suggest(HologramStorageSuggestions)
+            .execute(TeleportCommand),
+    )
 }
 
 pub fn build_movehere_node() -> CommandNode {

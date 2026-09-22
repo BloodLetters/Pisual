@@ -10,14 +10,16 @@ pub mod storage;
 pub use hologram::{BillboardType, Hologram, HologramData};
 pub use manager::HologramManager;
 
-use pumpkin_plugin_api::{scheduler::SchedulerExt, Context, Plugin, PluginMetadata, Server};
+use pumpkin_plugin_api::{Context, Plugin, PluginMetadata, Server, scheduler::SchedulerExt};
 use std::sync::{OnceLock, RwLock};
 
 static MANAGER: OnceLock<RwLock<HologramManager>> = OnceLock::new();
 static SERVER: OnceLock<RwLock<Option<Server>>> = OnceLock::new();
 
 pub fn get_manager() -> &'static RwLock<HologramManager> {
-    MANAGER.get().expect("HologramManager has not been initialized")
+    MANAGER
+        .get()
+        .expect("HologramManager has not been initialized")
 }
 
 pub fn get_world(world_name: &str) -> Option<pumpkin_plugin_api::world::World> {
@@ -117,11 +119,7 @@ impl Plugin for Pisual {
         Ok(())
     }
 
-    fn handle_ipc_message(
-        &self,
-        sender: String,
-        message: Vec<u8>,
-    ) -> Result<Vec<u8>, String> {
+    fn handle_ipc_message(&self, sender: String, message: Vec<u8>) -> Result<Vec<u8>, String> {
         ipc::handle_message(&sender, &message)
     }
 }

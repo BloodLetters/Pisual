@@ -1,4 +1,4 @@
-use crate::hologram::{BillboardType, VisualConfig};
+use crate::hologram::{BillboardType, ClickAction, VisualConfig, VisualElement};
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -22,7 +22,15 @@ pub enum IpcRequest {
         #[serde(default)]
         visual: Option<VisualConfig>,
         #[serde(default)]
+        elements: Option<Vec<VisualElement>>,
+        #[serde(default)]
         refresh_interval: Option<u64>,
+        #[serde(default)]
+        actions: Option<Vec<ClickAction>>,
+        #[serde(default)]
+        interaction_width: Option<f32>,
+        #[serde(default)]
+        interaction_height: Option<f32>,
     },
     CreateRam {
         id: String,
@@ -40,7 +48,15 @@ pub enum IpcRequest {
         #[serde(default)]
         visual: Option<VisualConfig>,
         #[serde(default)]
+        elements: Option<Vec<VisualElement>>,
+        #[serde(default)]
         refresh_interval: Option<u64>,
+        #[serde(default)]
+        actions: Option<Vec<ClickAction>>,
+        #[serde(default)]
+        interaction_width: Option<f32>,
+        #[serde(default)]
+        interaction_height: Option<f32>,
     },
     Edit {
         id: String,
@@ -59,7 +75,15 @@ pub enum IpcRequest {
         #[serde(default)]
         clear_visual: Option<bool>,
         #[serde(default)]
+        elements: Option<Vec<VisualElement>>,
+        #[serde(default)]
         refresh_interval: Option<u64>,
+        #[serde(default)]
+        actions: Option<Vec<ClickAction>>,
+        #[serde(default)]
+        interaction_width: Option<f32>,
+        #[serde(default)]
+        interaction_height: Option<f32>,
     },
     Move {
         id: String,

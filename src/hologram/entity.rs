@@ -1,4 +1,4 @@
-use super::model::{HologramData, VisualType};
+use super::model::{HologramData, VisualElement, VisualType};
 
 use pumpkin_plugin_api::{
     EntityType,
@@ -86,6 +86,50 @@ pub fn despawn_display(entity: &Entity) {
     entity.remove();
 }
 
+pub fn spawn_interaction(world: &World, data: &HologramData) -> Option<Entity> {
+    let entity = world.spawn_entity(EntityType::Interaction, data.position);
+    if let Some(interaction) = entity.as_interaction() {
+        let width = data.interaction_width.unwrap_or(1.2);
+        let height = data.interaction_height.unwrap_or_else(|| {
+            let text_height = (data.lines.len() as f32) * 0.35;
+            let visual_height = if let Some(visual) = &data.visual {
+                visual.offset_y.abs() as f32 + 0.6
+            } else {
+                0.0
+            };
+            (text_height + visual_height).max(0.6)
+        });
+        interaction.set_width(width);
+        interaction.set_height(height);
+        interaction.set_response(true);
+        Some(entity)
+    } else {
+        entity.remove();
+        None
+    }
+}
+
+pub fn update_interaction(entity: &Entity, data: &HologramData) -> bool {
+    if let Some(interaction) = entity.as_interaction() {
+        let width = data.interaction_width.unwrap_or(1.2);
+        let height = data.interaction_height.unwrap_or_else(|| {
+            let text_height = (data.lines.len() as f32) * 0.35;
+            let visual_height = if let Some(visual) = &data.visual {
+                visual.offset_y.abs() as f32 + 0.6
+            } else {
+                0.0
+            };
+            (text_height + visual_height).max(0.6)
+        });
+        interaction.set_width(width);
+        interaction.set_height(height);
+        interaction.set_response(true);
+        true
+    } else {
+        false
+    }
+}
+
 pub fn calculate_visual_position(
     base_position: (f64, f64, f64),
     data: &HologramData,
@@ -105,15 +149,19 @@ pub fn calculate_visual_position(
     }
 }
 
-pub fn spawn_visual(world: &World, data: &HologramData) -> Option<Entity> {
-    let visual = data.visual.as_ref()?;
-    let visual_position = calculate_visual_position(data.position, data);
-
-    let spawned_entity = match &visual.visual_type {
+pub fn spawn_typed_visual(
+    world: &World,
+    visual_type: &VisualType,
+    position: (f64, f64, f64),
+    scale: (f32, f32, f32),
+    rotation: Option<(f32, f32)>,
+    data: &HologramData,
+) -> Option<Entity> {
+    let spawned_entity = match visual_type {
         VisualType::Item { item } => {
-            let entity = world.spawn_entity(EntityType::ItemDisplay, visual_position);
+            let entity = world.spawn_entity(EntityType::ItemDisplay, position);
             if let Some(item_display) = entity.as_item_display() {
-                apply_item_properties(&item_display, item, data, visual.scale);
+                apply_item_properties(&item_display, item, data, scale);
                 Some(entity)
             } else {
                 crate::logger::error(&format!(
@@ -125,9 +173,9 @@ pub fn spawn_visual(world: &World, data: &HologramData) -> Option<Entity> {
             }
         }
         VisualType::Block { block } => {
-            let entity = world.spawn_entity(EntityType::BlockDisplay, visual_position);
+            let entity = world.spawn_entity(EntityType::BlockDisplay, position);
             if let Some(block_display) = entity.as_block_display() {
-                apply_block_properties(&block_display, block, data, visual.scale);
+                apply_block_properties(&block_display, block, data, scale);
                 Some(entity)
             } else {
                 crate::logger::error(&format!(
@@ -140,17 +188,90 @@ pub fn spawn_visual(world: &World, data: &HologramData) -> Option<Entity> {
         }
         VisualType::Entity { entity_type } => {
             let parsed_type = parse_entity_type(entity_type)?;
-            let entity = world.spawn_entity(parsed_type, visual_position);
+            let entity = world.spawn_entity(parsed_type, position);
             apply_frozen_living_properties(&entity);
             Some(entity)
         }
     }?;
 
-    if let Some((yaw, pitch)) = visual.rotation {
+    if let Some((yaw, pitch)) = rotation {
         spawned_entity.set_rotation(yaw, pitch);
     }
 
     Some(spawned_entity)
+}
+
+pub fn spawn_visual(world: &World, data: &HologramData) -> Option<Entity> {
+    let visual = data.visual.as_ref()?;
+    let visual_position = calculate_visual_position(data.position, data);
+    spawn_typed_visual(
+        world,
+        &visual.visual_type,
+        visual_position,
+        visual.scale,
+        visual.rotation,
+        data,
+    )
+}
+
+pub fn calculate_element_position(
+    base_position: (f64, f64, f64),
+    element: &VisualElement,
+) -> (f64, f64, f64) {
+    (
+        base_position.0 + element.offset_x,
+        base_position.1 + element.offset_y,
+        base_position.2 + element.offset_z,
+    )
+}
+
+pub fn spawn_element_visual(
+    world: &World,
+    data: &HologramData,
+    element: &VisualElement,
+) -> Option<Entity> {
+    let position = calculate_element_position(data.position, element);
+    spawn_typed_visual(
+        world,
+        &element.visual_type,
+        position,
+        element.scale,
+        element.rotation,
+        data,
+    )
+}
+
+pub fn spawn_element_interaction(
+    world: &World,
+    data: &HologramData,
+    element: &VisualElement,
+) -> Option<Entity> {
+    let position = calculate_element_position(data.position, element);
+    let entity = world.spawn_entity(EntityType::Interaction, position);
+    if let Some(interaction) = entity.as_interaction() {
+        let width = element.interaction_width.unwrap_or(0.8);
+        let height = element.interaction_height.unwrap_or(0.8);
+        interaction.set_width(width);
+        interaction.set_height(height);
+        interaction.set_response(true);
+        Some(entity)
+    } else {
+        entity.remove();
+        None
+    }
+}
+
+pub fn update_element_interaction(entity: &Entity, element: &VisualElement) -> bool {
+    if let Some(interaction) = entity.as_interaction() {
+        let width = element.interaction_width.unwrap_or(0.8);
+        let height = element.interaction_height.unwrap_or(0.8);
+        interaction.set_width(width);
+        interaction.set_height(height);
+        interaction.set_response(true);
+        true
+    } else {
+        false
+    }
 }
 
 fn apply_item_properties(

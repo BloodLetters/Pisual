@@ -1,10 +1,10 @@
 use super::utils::{
-    get_int_arg, get_string_arg, send_error, send_feedback, HologramStorageSuggestions,
+    HologramStorageSuggestions, get_int_arg, get_string_arg, send_error, send_feedback,
 };
 use pumpkin_plugin_api::{
+    Server,
     command::{ArgumentType, CommandError, CommandNode, CommandSender, ConsumedArgs, StringType},
     commands::CommandHandler,
-    Server,
 };
 
 pub struct AddLineCommand;
@@ -27,7 +27,10 @@ impl CommandHandler for AddLineCommand {
         let text = match get_string_arg(&args, "text") {
             Some(text) => text,
             None => {
-                send_error(&sender, "Text cannot be empty! Usage: /holo addline <id> <text>");
+                send_error(
+                    &sender,
+                    "Text cannot be empty! Usage: /holo addline <id> <text>",
+                );
                 return Ok(0);
             }
         };
@@ -81,7 +84,10 @@ impl CommandHandler for SetLineCommand {
         let index_1based = match get_int_arg(&args, "index") {
             Some(n) if n >= 1 => n as usize,
             _ => {
-                send_error(&sender, "Line index must be a positive integer starting at 1!");
+                send_error(
+                    &sender,
+                    "Line index must be a positive integer starting at 1!",
+                );
                 return Ok(0);
             }
         };
@@ -89,7 +95,10 @@ impl CommandHandler for SetLineCommand {
         let text = match get_string_arg(&args, "text") {
             Some(text) => text,
             None => {
-                send_error(&sender, "Text cannot be empty! Usage: /holo setline <id> <index> <text>");
+                send_error(
+                    &sender,
+                    "Text cannot be empty! Usage: /holo setline <id> <index> <text>",
+                );
                 return Ok(0);
             }
         };
@@ -149,7 +158,10 @@ impl CommandHandler for RemoveLineCommand {
         let index_1based = match get_int_arg(&args, "index") {
             Some(n) if n >= 1 => n as usize,
             _ => {
-                send_error(&sender, "Line index must be a positive integer starting at 1!");
+                send_error(
+                    &sender,
+                    "Line index must be a positive integer starting at 1!",
+                );
                 return Ok(0);
             }
         };
@@ -216,8 +228,11 @@ pub fn build_setline_node() -> CommandNode {
                     CommandNode::argument("index", &ArgumentType::Integer((Some(1), None)))
                         .execute(SetLineCommand)
                         .then(
-                            CommandNode::argument("text", &ArgumentType::String(StringType::Greedy))
-                                .execute(SetLineCommand),
+                            CommandNode::argument(
+                                "text",
+                                &ArgumentType::String(StringType::Greedy),
+                            )
+                            .execute(SetLineCommand),
                         ),
                 ),
         )

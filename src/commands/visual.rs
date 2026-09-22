@@ -1,12 +1,12 @@
 use super::utils::{
-    calculate_facing_direction, get_string_arg, is_player, send_error, send_feedback,
-    HologramStorageSuggestions,
+    HologramStorageSuggestions, calculate_facing_direction, get_string_arg, is_player, send_error,
+    send_feedback,
 };
-use crate::hologram::{parse_entity_type, VisualConfig};
+use crate::hologram::{VisualConfig, parse_entity_type};
 use pumpkin_plugin_api::{
+    Server,
     command::{ArgumentType, CommandError, CommandNode, CommandSender, ConsumedArgs, StringType},
     commands::CommandHandler,
-    Server,
 };
 
 fn parse_numeric_argument(raw_value: &str, argument_name: &str) -> Result<f64, String> {
@@ -15,9 +15,7 @@ fn parse_numeric_argument(raw_value: &str, argument_name: &str) -> Result<f64, S
         .map_err(|_| format!("{argument_name} must be a valid number, got '{raw_value}'!"))
 }
 
-fn parse_single_or_triple_coordinates(
-    arguments: &ConsumedArgs,
-) -> Result<(f64, f64, f64), String> {
+fn parse_single_or_triple_coordinates(arguments: &ConsumedArgs) -> Result<(f64, f64, f64), String> {
     let first_argument = match get_string_arg(arguments, "x_or_y") {
         Some(value) => value,
         None => return Err("Offset coordinate must be specified.".to_string()),
@@ -37,9 +35,7 @@ fn parse_single_or_triple_coordinates(
     }
 }
 
-fn parse_single_or_triple_scale(
-    arguments: &ConsumedArgs,
-) -> Result<(f32, f32, f32), String> {
+fn parse_single_or_triple_scale(arguments: &ConsumedArgs) -> Result<(f32, f32, f32), String> {
     let first_argument = match get_string_arg(arguments, "x_or_uniform") {
         Some(value) => value,
         None => return Err("Scale multiplier must be specified.".to_string()),
@@ -180,7 +176,10 @@ impl CommandHandler for VisualEntityCommand {
         let hologram = match manager.get_mut(&identifier) {
             Some(holo) => holo,
             None => {
-                send_error(&sender, &format!("Hologram '&e{identifier}&c' was not found!"));
+                send_error(
+                    &sender,
+                    &format!("Hologram '&e{identifier}&c' was not found!"),
+                );
                 return Ok(0);
             }
         };
@@ -193,7 +192,11 @@ impl CommandHandler for VisualEntityCommand {
         configuration.rotation = calculate_facing_from_sender(
             &sender,
             hologram.data.position,
-            (configuration.offset_x, configuration.offset_y, configuration.offset_z),
+            (
+                configuration.offset_x,
+                configuration.offset_y,
+                configuration.offset_z,
+            ),
         );
 
         let target_world = crate::get_world(&hologram.data.world_name);
@@ -202,7 +205,9 @@ impl CommandHandler for VisualEntityCommand {
 
         send_feedback(
             &sender,
-            &format!("&aAttached entity visual '&e{entity_type_name}&a' facing you to hologram '&e{identifier}&a'!"),
+            &format!(
+                "&aAttached entity visual '&e{entity_type_name}&a' facing you to hologram '&e{identifier}&a'!"
+            ),
         );
         Ok(1)
     }
@@ -259,7 +264,10 @@ impl CommandHandler for VisualItemCommand {
         let hologram = match manager.get_mut(&identifier) {
             Some(holo) => holo,
             None => {
-                send_error(&sender, &format!("Hologram '&e{identifier}&c' was not found!"));
+                send_error(
+                    &sender,
+                    &format!("Hologram '&e{identifier}&c' was not found!"),
+                );
                 return Ok(0);
             }
         };
@@ -272,7 +280,11 @@ impl CommandHandler for VisualItemCommand {
         configuration.rotation = calculate_facing_from_sender(
             &sender,
             hologram.data.position,
-            (configuration.offset_x, configuration.offset_y, configuration.offset_z),
+            (
+                configuration.offset_x,
+                configuration.offset_y,
+                configuration.offset_z,
+            ),
         );
 
         let target_world = crate::get_world(&hologram.data.world_name);
@@ -281,7 +293,9 @@ impl CommandHandler for VisualItemCommand {
 
         send_feedback(
             &sender,
-            &format!("&aAttached item visual '&e{item_name}&a' facing you to hologram '&e{identifier}&a'!"),
+            &format!(
+                "&aAttached item visual '&e{item_name}&a' facing you to hologram '&e{identifier}&a'!"
+            ),
         );
         Ok(1)
     }
@@ -338,7 +352,10 @@ impl CommandHandler for VisualBlockCommand {
         let hologram = match manager.get_mut(&identifier) {
             Some(holo) => holo,
             None => {
-                send_error(&sender, &format!("Hologram '&e{identifier}&c' was not found!"));
+                send_error(
+                    &sender,
+                    &format!("Hologram '&e{identifier}&c' was not found!"),
+                );
                 return Ok(0);
             }
         };
@@ -351,7 +368,11 @@ impl CommandHandler for VisualBlockCommand {
         configuration.rotation = calculate_facing_from_sender(
             &sender,
             hologram.data.position,
-            (configuration.offset_x, configuration.offset_y, configuration.offset_z),
+            (
+                configuration.offset_x,
+                configuration.offset_y,
+                configuration.offset_z,
+            ),
         );
 
         let target_world = crate::get_world(&hologram.data.world_name);
@@ -360,7 +381,9 @@ impl CommandHandler for VisualBlockCommand {
 
         send_feedback(
             &sender,
-            &format!("&aAttached block visual '&e{block_name}&a' facing you to hologram '&e{identifier}&a'!"),
+            &format!(
+                "&aAttached block visual '&e{block_name}&a' facing you to hologram '&e{identifier}&a'!"
+            ),
         );
         Ok(1)
     }
@@ -406,7 +429,10 @@ impl CommandHandler for VisualOffsetCommand {
         let hologram = match manager.get_mut(&identifier) {
             Some(holo) => holo,
             None => {
-                send_error(&sender, &format!("Hologram '&e{identifier}&c' was not found!"));
+                send_error(
+                    &sender,
+                    &format!("Hologram '&e{identifier}&c' was not found!"),
+                );
                 return Ok(0);
             }
         };
@@ -416,7 +442,9 @@ impl CommandHandler for VisualOffsetCommand {
             None => {
                 send_error(
                     &sender,
-                    &format!("Hologram '&e{identifier}&c' has no visual attached! Use /holo visual <id> entity|item|block first."),
+                    &format!(
+                        "Hologram '&e{identifier}&c' has no visual attached! Use /holo visual <id> entity|item|block first."
+                    ),
                 );
                 return Ok(0);
             }
@@ -432,7 +460,9 @@ impl CommandHandler for VisualOffsetCommand {
 
         send_feedback(
             &sender,
-            &format!("&aUpdated visual offset of '&e{identifier}&a' to &e({offset_x}, {offset_y}, {offset_z})&a!"),
+            &format!(
+                "&aUpdated visual offset of '&e{identifier}&a' to &e({offset_x}, {offset_y}, {offset_z})&a!"
+            ),
         );
         Ok(1)
     }
@@ -478,7 +508,10 @@ impl CommandHandler for VisualScaleCommand {
         let hologram = match manager.get_mut(&identifier) {
             Some(holo) => holo,
             None => {
-                send_error(&sender, &format!("Hologram '&e{identifier}&c' was not found!"));
+                send_error(
+                    &sender,
+                    &format!("Hologram '&e{identifier}&c' was not found!"),
+                );
                 return Ok(0);
             }
         };
@@ -488,7 +521,9 @@ impl CommandHandler for VisualScaleCommand {
             None => {
                 send_error(
                     &sender,
-                    &format!("Hologram '&e{identifier}&c' has no visual attached! Use /holo visual <id> entity|item|block first."),
+                    &format!(
+                        "Hologram '&e{identifier}&c' has no visual attached! Use /holo visual <id> entity|item|block first."
+                    ),
                 );
                 return Ok(0);
             }
@@ -502,7 +537,9 @@ impl CommandHandler for VisualScaleCommand {
 
         send_feedback(
             &sender,
-            &format!("&aUpdated visual scale of '&e{identifier}&a' to &e({scale_x}, {scale_y}, {scale_z})&a!"),
+            &format!(
+                "&aUpdated visual scale of '&e{identifier}&a' to &e({scale_x}, {scale_y}, {scale_z})&a!"
+            ),
         );
         Ok(1)
     }
@@ -538,7 +575,10 @@ impl CommandHandler for VisualFacePlayerCommand {
         let hologram = match manager.get_mut(&identifier) {
             Some(holo) => holo,
             None => {
-                send_error(&sender, &format!("Hologram '&e{identifier}&c' was not found!"));
+                send_error(
+                    &sender,
+                    &format!("Hologram '&e{identifier}&c' was not found!"),
+                );
                 return Ok(0);
             }
         };
@@ -562,11 +602,8 @@ impl CommandHandler for VisualFacePlayerCommand {
             hologram_position.1 + configuration.offset_y,
             hologram_position.2 + configuration.offset_z,
         );
-        let facing_direction = calculate_facing_direction(
-            visual_world_position,
-            player_position,
-            player_yaw,
-        );
+        let facing_direction =
+            calculate_facing_direction(visual_world_position, player_position, player_yaw);
 
         configuration.rotation = Some(facing_direction);
 
@@ -611,7 +648,10 @@ impl CommandHandler for VisualClearCommand {
         let hologram = match manager.get_mut(&identifier) {
             Some(holo) => holo,
             None => {
-                send_error(&sender, &format!("Hologram '&e{identifier}&c' was not found!"));
+                send_error(
+                    &sender,
+                    &format!("Hologram '&e{identifier}&c' was not found!"),
+                );
                 return Ok(0);
             }
         };
@@ -638,68 +678,104 @@ pub fn build_node() -> CommandNode {
                     CommandNode::literal("entity")
                         .execute(VisualHelpCommand)
                         .then(
-                            CommandNode::argument("type", &ArgumentType::String(StringType::SingleWord))
-                                .execute(VisualEntityCommand)
-                                .then(
-                                    CommandNode::argument("offset", &ArgumentType::String(StringType::SingleWord))
-                                        .execute(VisualEntityCommand),
-                                ),
+                            CommandNode::argument(
+                                "type",
+                                &ArgumentType::String(StringType::SingleWord),
+                            )
+                            .execute(VisualEntityCommand)
+                            .then(
+                                CommandNode::argument(
+                                    "offset",
+                                    &ArgumentType::String(StringType::SingleWord),
+                                )
+                                .execute(VisualEntityCommand),
+                            ),
                         ),
                 )
                 .then(
                     CommandNode::literal("item")
                         .execute(VisualHelpCommand)
                         .then(
-                            CommandNode::argument("name", &ArgumentType::String(StringType::SingleWord))
-                                .execute(VisualItemCommand)
-                                .then(
-                                    CommandNode::argument("offset", &ArgumentType::String(StringType::SingleWord))
-                                        .execute(VisualItemCommand),
-                                ),
+                            CommandNode::argument(
+                                "name",
+                                &ArgumentType::String(StringType::SingleWord),
+                            )
+                            .execute(VisualItemCommand)
+                            .then(
+                                CommandNode::argument(
+                                    "offset",
+                                    &ArgumentType::String(StringType::SingleWord),
+                                )
+                                .execute(VisualItemCommand),
+                            ),
                         ),
                 )
                 .then(
                     CommandNode::literal("block")
                         .execute(VisualHelpCommand)
                         .then(
-                            CommandNode::argument("name", &ArgumentType::String(StringType::SingleWord))
-                                .execute(VisualBlockCommand)
-                                .then(
-                                    CommandNode::argument("offset", &ArgumentType::String(StringType::SingleWord))
-                                        .execute(VisualBlockCommand),
-                                ),
+                            CommandNode::argument(
+                                "name",
+                                &ArgumentType::String(StringType::SingleWord),
+                            )
+                            .execute(VisualBlockCommand)
+                            .then(
+                                CommandNode::argument(
+                                    "offset",
+                                    &ArgumentType::String(StringType::SingleWord),
+                                )
+                                .execute(VisualBlockCommand),
+                            ),
                         ),
                 )
                 .then(
                     CommandNode::literal("offset")
                         .execute(VisualHelpCommand)
                         .then(
-                            CommandNode::argument("x_or_y", &ArgumentType::String(StringType::SingleWord))
+                            CommandNode::argument(
+                                "x_or_y",
+                                &ArgumentType::String(StringType::SingleWord),
+                            )
+                            .execute(VisualOffsetCommand)
+                            .then(
+                                CommandNode::argument(
+                                    "y",
+                                    &ArgumentType::String(StringType::SingleWord),
+                                )
                                 .execute(VisualOffsetCommand)
                                 .then(
-                                    CommandNode::argument("y", &ArgumentType::String(StringType::SingleWord))
-                                        .execute(VisualOffsetCommand)
-                                        .then(
-                                            CommandNode::argument("z", &ArgumentType::String(StringType::SingleWord))
-                                                .execute(VisualOffsetCommand),
-                                        ),
+                                    CommandNode::argument(
+                                        "z",
+                                        &ArgumentType::String(StringType::SingleWord),
+                                    )
+                                    .execute(VisualOffsetCommand),
                                 ),
+                            ),
                         ),
                 )
                 .then(
                     CommandNode::literal("scale")
                         .execute(VisualHelpCommand)
                         .then(
-                            CommandNode::argument("x_or_uniform", &ArgumentType::String(StringType::SingleWord))
+                            CommandNode::argument(
+                                "x_or_uniform",
+                                &ArgumentType::String(StringType::SingleWord),
+                            )
+                            .execute(VisualScaleCommand)
+                            .then(
+                                CommandNode::argument(
+                                    "y",
+                                    &ArgumentType::String(StringType::SingleWord),
+                                )
                                 .execute(VisualScaleCommand)
                                 .then(
-                                    CommandNode::argument("y", &ArgumentType::String(StringType::SingleWord))
-                                        .execute(VisualScaleCommand)
-                                        .then(
-                                            CommandNode::argument("z", &ArgumentType::String(StringType::SingleWord))
-                                                .execute(VisualScaleCommand),
-                                        ),
+                                    CommandNode::argument(
+                                        "z",
+                                        &ArgumentType::String(StringType::SingleWord),
+                                    )
+                                    .execute(VisualScaleCommand),
                                 ),
+                            ),
                         ),
                 )
                 .then(CommandNode::literal("faceplayer").execute(VisualFacePlayerCommand))

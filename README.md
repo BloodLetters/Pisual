@@ -25,7 +25,7 @@
 - [x] **Hologram Animations**: Cycle lines, color fades, and floating movement effects.
 - [x] **Modular Storage Architecture**: Directory-based per-hologram storage (`holograms/<id>/data.json`) with fault tolerance and legacy migration.
 - [x] **Internal Placeholders & Auto-Refresh**: Support dynamic placeholder variables (e.g., `{player}`, `{online}`, `{max_players}`, `{ping}`, `{tps}`) with configurable refresh intervals.
-- [ ] **Interactive Click Actions**: Execute player/console commands, send chat messages, or play sounds when a player clicks/interacts with a hologram.
+- [x] **Interactive Click Actions**: Execute player/console commands, send chat messages, or play sounds when a player clicks/interacts with a hologram.
 - [ ] **Per-Player Personalization & Conditional Visibility**: Restrict hologram visibility by permission, distance, or player conditions, with per-player placeholder evaluation.
 - [ ] **Hologram Pages & Slideshows**: Multi-page holograms with automated rotation timers and interactive next/previous page click navigation.
 - [ ] **Rich Color Formatting & Gradients**: Full hex/RGB color code support (`&#RRGGBB`), multi-color gradients, and rainbow text animations.
@@ -48,6 +48,8 @@ Explore the full Inter-Plugin Communication (IPC) specification, generate JSON p
 | `/pisual delete <id>` | Remove an existing hologram |
 | `/pisual list` | List all existing holograms |
 | `/pisual lines <id> <add\|set\|remove>` | Manage hologram lines |
+| `/pisual action <id> <list\|clear\|remove\|add\|size>` | Configure interactive click actions and hitbox size |
+| `/pisual element <id> <list\|add\|remove\|offset\|scale\|size\|action>` | Manage multi-visual elements and per-element click actions |
 | `/pisual interval <id> [ticks]` | Configure or view auto-refresh interval |
 | `/pisual visual <id> <entity\|item\|block\|offset\|scale\|faceplayer\|clear>` | Attach, adjust offset/scale, face player, or clear visual display |
 | `/pisual teleport <id> [here]` | Teleport to a hologram or bring it to you |
@@ -120,6 +122,48 @@ Evaluated from the hologram's own properties:
 | `{line_count}` | Number of lines in the hologram |
 | `{billboard}` | Hologram billboard orientation mode |
 | `{view_range}` | Entity view distance range |
+
+
+## Interactive Click Actions
+
+Pisual holograms can be made interactive by attaching click actions. When actions are configured, an interaction hitbox entity is automatically spawned and synchronized with the hologram.
+
+### Action Types
+- **`player_command`**: Dispatches a command executed as the clicking player (e.g. `spawn`, `warp shop`).
+- **`console_command`**: Dispatches a command executed by server console (e.g. `give {player} diamond 1`).
+- **`message`**: Sends a formatted chat message directly to the player (supports color codes like `&a`, `&l`).
+- **`sound`**: Plays a sound effect to the player (format: `sound_name [volume] [pitch]`, e.g. `entity.experience_orb.pickup 1.0 1.0`).
+
+All actions support dynamic placeholders (such as `{player}`, `{online}`, `{holo_id}`) which are resolved at the moment of interaction.
+
+### Action Commands
+- `/pisual action <id> list` - List all configured click actions on a hologram.
+- `/pisual action <id> clear` - Remove all click actions and despawn the interaction hitbox.
+- `/pisual action <id> remove <index>` - Remove a specific action by its index.
+- `/pisual action <id> add <any|right|left> <player_command|console_command|message|sound> <value>` - Add a new click action.
+- `/pisual action <id> size [width] [height]` - View or adjust the interaction hitbox dimensions (default: 1.0 x 1.0).
+
+
+## Multi-Visual Elements (Interactive 3D Components)
+
+Pisual allows attaching multiple independent visual elements (items, blocks, or mob entities) to a single hologram. Each element has its own:
+- 3D offset (`offset_x`, `offset_y`, `offset_z`) relative to the hologram base position.
+- Scale and rotation.
+- **Dedicated interactive click actions** with an individual interaction hitbox at the element's position.
+
+This enables building interactive 3D in-game UI menus, confirm/cancel dialogue buttons (e.g. red block on left, green block on right), and shopping showcases within a single hologram!
+
+### Element Commands
+- `/pisual element <id> list` - List all visual elements attached to a hologram.
+- `/pisual element <id> add <elem_id> <item|block|entity> <name> [x] [y] [z]` - Add or update a visual element.
+- `/pisual element <id> remove <elem_id>` - Remove a visual element and despawn its entities.
+- `/pisual element <id> offset <elem_id> <x> <y> <z>` - Adjust element offset coordinates.
+- `/pisual element <id> scale <elem_id> <scale> [y] [z]` - Adjust element display scale.
+- `/pisual element <id> size <elem_id> [width] [height]` - Adjust interaction hitbox dimensions for this element.
+- `/pisual element <id> action <elem_id> list` - List click actions for this element.
+- `/pisual element <id> action <elem_id> add <any|right|left> <action_type> <value>` - Add click action to this element.
+- `/pisual element <id> action <elem_id> remove <index>` - Remove an action from this element.
+- `/pisual element <id> action <elem_id> clear` - Clear all click actions for this element.
 
 
 ## Building

@@ -1,10 +1,10 @@
 use super::utils::{
-    get_int_arg, get_string_arg, send_error, send_feedback, HologramStorageSuggestions,
+    HologramStorageSuggestions, get_int_arg, get_string_arg, send_error, send_feedback,
 };
 use pumpkin_plugin_api::{
+    Server,
     command::{ArgumentType, CommandError, CommandNode, CommandSender, ConsumedArgs, StringType},
     commands::CommandHandler,
-    Server,
 };
 
 pub struct IntervalCommand;
@@ -35,7 +35,10 @@ impl CommandHandler for IntervalCommand {
 
         if let Some(ticks) = get_int_arg(&args, "ticks") {
             if ticks < 0 {
-                send_error(&sender, "Interval ticks must be non-negative (0 to disable)!");
+                send_error(
+                    &sender,
+                    "Interval ticks must be non-negative (0 to disable)!",
+                );
                 return Ok(0);
             }
 
@@ -76,7 +79,9 @@ impl CommandHandler for IntervalCommand {
                 Some(0) => {
                     send_feedback(
                         &sender,
-                        &format!("&7Auto-refresh for hologram '&e{id}&7' is currently &cDisabled&7."),
+                        &format!(
+                            "&7Auto-refresh for hologram '&e{id}&7' is currently &cDisabled&7."
+                        ),
                     );
                 }
                 Some(n) => {

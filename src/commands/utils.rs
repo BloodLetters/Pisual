@@ -1,13 +1,13 @@
 use pumpkin_plugin_api::{
+    Server,
     command::{
         Arg, CommandError, CommandSender, CommandSuggestion, CommandSuggestions, ConsumedArgs,
         SuggestionRequest,
     },
-    commands::CommandSuggestionHandler,
     command_wit::Number,
+    commands::CommandSuggestionHandler,
     player::Player,
     text::TextComponent,
-    Server,
 };
 
 pub const PREFIX: &str = "&6[&ePisual&6]&r ";
@@ -46,7 +46,10 @@ pub fn get_int_arg(args: &ConsumedArgs, key: &str) -> Option<i32> {
 
 pub fn is_player(sender: &CommandSender) -> Result<Player, CommandError> {
     sender.as_player().ok_or_else(|| {
-        send_error(sender, "This command can only be executed by a player in-game!");
+        send_error(
+            sender,
+            "This command can only be executed by a player in-game!",
+        );
         CommandError::CommandFailed(TextComponent::text("Only players can execute this command"))
     })
 }

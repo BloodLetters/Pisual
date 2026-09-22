@@ -1,8 +1,8 @@
-use super::utils::{get_string_arg, send_error, send_feedback, HologramStorageSuggestions};
+use super::utils::{HologramStorageSuggestions, get_string_arg, send_error, send_feedback};
 use pumpkin_plugin_api::{
+    Server,
     command::{ArgumentType, CommandError, CommandNode, CommandSender, ConsumedArgs, StringType},
     commands::CommandHandler,
-    Server,
 };
 
 pub struct DeleteCommand;
@@ -48,21 +48,17 @@ impl CommandHandler for DeleteCommand {
 }
 
 pub fn build_node() -> CommandNode {
-    CommandNode::literal("delete")
-        .execute(DeleteCommand)
-        .then(
-            CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
-                .suggest(HologramStorageSuggestions)
-                .execute(DeleteCommand),
-        )
+    CommandNode::literal("delete").execute(DeleteCommand).then(
+        CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+            .suggest(HologramStorageSuggestions)
+            .execute(DeleteCommand),
+    )
 }
 
 pub fn build_remove_node() -> CommandNode {
-    CommandNode::literal("remove")
-        .execute(DeleteCommand)
-        .then(
-            CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
-                .suggest(HologramStorageSuggestions)
-                .execute(DeleteCommand),
-        )
+    CommandNode::literal("remove").execute(DeleteCommand).then(
+        CommandNode::argument("id", &ArgumentType::String(StringType::SingleWord))
+            .suggest(HologramStorageSuggestions)
+            .execute(DeleteCommand),
+    )
 }

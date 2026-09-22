@@ -1,8 +1,8 @@
 use super::utils::{send_error, send_feedback};
 use pumpkin_plugin_api::{
+    Server,
     command::{CommandError, CommandNode, CommandSender, ConsumedArgs},
     commands::CommandHandler,
-    Server,
 };
 
 pub struct ListCommand;

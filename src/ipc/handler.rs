@@ -28,7 +28,11 @@ fn process_request(request: IpcRequest) -> IpcResponse {
             see_through,
             scale,
             visual,
+            elements,
             refresh_interval,
+            actions,
+            interaction_width,
+            interaction_height,
         } => {
             let mut manager = match crate::get_manager().write() {
                 Ok(guard) => guard,
@@ -51,7 +55,15 @@ fn process_request(request: IpcRequest) -> IpcResponse {
                 data.scale = custom_scale;
             }
             data.visual = visual;
+            if let Some(custom_elements) = elements {
+                data.elements = custom_elements;
+            }
             data.refresh_interval = refresh_interval;
+            if let Some(custom_actions) = actions {
+                data.actions = custom_actions;
+            }
+            data.interaction_width = interaction_width;
+            data.interaction_height = interaction_height;
 
             match manager.create_hologram(data, world_instance.as_ref()) {
                 Ok(_) => IpcResponse::success(format!("Hologram '{id}' created successfully")),
@@ -68,7 +80,11 @@ fn process_request(request: IpcRequest) -> IpcResponse {
             see_through,
             scale,
             visual,
+            elements,
             refresh_interval,
+            actions,
+            interaction_width,
+            interaction_height,
         } => {
             let mut manager = match crate::get_manager().write() {
                 Ok(guard) => guard,
@@ -91,7 +107,15 @@ fn process_request(request: IpcRequest) -> IpcResponse {
                 data.scale = custom_scale;
             }
             data.visual = visual;
+            if let Some(custom_elements) = elements {
+                data.elements = custom_elements;
+            }
             data.refresh_interval = refresh_interval;
+            if let Some(custom_actions) = actions {
+                data.actions = custom_actions;
+            }
+            data.interaction_width = interaction_width;
+            data.interaction_height = interaction_height;
 
             match manager.create_hologram(data, world_instance.as_ref()) {
                 Ok(_) => IpcResponse::success(format!("hologram '{id}' created successfully")),
@@ -107,7 +131,11 @@ fn process_request(request: IpcRequest) -> IpcResponse {
             scale,
             visual,
             clear_visual,
+            elements,
             refresh_interval,
+            actions,
+            interaction_width,
+            interaction_height,
         } => {
             let mut manager = match crate::get_manager().write() {
                 Ok(guard) => guard,
@@ -141,8 +169,33 @@ fn process_request(request: IpcRequest) -> IpcResponse {
                 let world_instance = crate::get_world(&world_name);
                 hologram.set_visual(visual, world_instance.as_ref());
             }
+            if let Some(new_elements) = elements {
+                hologram.data.elements = new_elements;
+                let world_name = hologram.data.world_name.clone();
+                let world_instance = crate::get_world(&world_name);
+                hologram.sync_elements(world_instance.as_ref());
+            }
             if refresh_interval.is_some() {
                 hologram.set_refresh_interval(refresh_interval);
+            }
+
+            let mut interaction_changed = false;
+            if let Some(new_actions) = actions {
+                hologram.data.actions = new_actions;
+                interaction_changed = true;
+            }
+            if interaction_width.is_some() {
+                hologram.data.interaction_width = interaction_width;
+                interaction_changed = true;
+            }
+            if interaction_height.is_some() {
+                hologram.data.interaction_height = interaction_height;
+                interaction_changed = true;
+            }
+            if interaction_changed {
+                let world_name = hologram.data.world_name.clone();
+                let world_instance = crate::get_world(&world_name);
+                hologram.sync_interaction(world_instance.as_ref());
             }
 
             let _ = manager.save();
@@ -167,7 +220,9 @@ fn process_request(request: IpcRequest) -> IpcResponse {
             let world_instance = match crate::get_world(&target_world_name) {
                 Some(w) => w,
                 None => {
-                    return IpcResponse::error(format!("World '{target_world_name}' is not loaded"));
+                    return IpcResponse::error(format!(
+                        "World '{target_world_name}' is not loaded"
+                    ));
                 }
             };
 

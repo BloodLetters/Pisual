@@ -1,5 +1,7 @@
+pub mod action;
 pub mod create;
 pub mod delete;
+pub mod element;
 pub mod help;
 pub mod interval;
 pub mod lines;
@@ -11,9 +13,9 @@ pub mod utils;
 pub mod visual;
 
 use pumpkin_plugin_api::{
+    Context,
     command::Command,
     permission::{Permission, PermissionDefault, PermissionLevel},
-    Context,
 };
 pub const PERMISSION_NODE: &str = "Pisual:admin";
 
@@ -25,7 +27,9 @@ pub fn register_commands(context: &Context) {
         children: Vec::new(),
     };
     if let Err(e) = context.register_permission(&perm) {
-        crate::logger::warn(&format!("Failed to register permission node {PERMISSION_NODE}: {e}"));
+        crate::logger::warn(&format!(
+            "Failed to register permission node {PERMISSION_NODE}: {e}"
+        ));
     }
 
     let cmd = Command::new(
@@ -44,6 +48,8 @@ pub fn register_commands(context: &Context) {
     .then(lines::build_addline_node())
     .then(lines::build_setline_node())
     .then(lines::build_removeline_node())
+    .then(action::build_node())
+    .then(element::build_node())
     .then(interval::build_node())
     .then(teleport::build_tp_node())
     .then(teleport::build_movehere_node())

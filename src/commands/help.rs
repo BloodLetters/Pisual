@@ -1,8 +1,8 @@
 use super::utils::send_feedback;
 use pumpkin_plugin_api::{
+    Server,
     command::{CommandError, CommandNode, CommandSender, ConsumedArgs},
     commands::CommandHandler,
-    Server,
 };
 
 pub struct HelpCommand;
@@ -15,18 +15,56 @@ impl CommandHandler for HelpCommand {
         _args: ConsumedArgs,
     ) -> Result<i32, CommandError> {
         send_feedback(&sender, "&6=== &ePisual Hologram Commands &6===");
-        send_feedback(&sender, "&e/holo create <id> <text> &8- &7Create hologram at your position");
-        send_feedback(&sender, "&e/holo delete <id> &8- &7Delete and despawn a hologram");
+        send_feedback(
+            &sender,
+            "&e/holo create <id> <text> &8- &7Create hologram at your position",
+        );
+        send_feedback(
+            &sender,
+            "&e/holo delete <id> &8- &7Delete and despawn a hologram",
+        );
         send_feedback(&sender, "&e/holo list &8- &7List all registered holograms");
-        send_feedback(&sender, "&e/holo addline <id> <text> &8- &7Add a new line of text");
-        send_feedback(&sender, "&e/holo setline <id> <index> <text> &8- &7Edit a specific line (1-indexed)");
-        send_feedback(&sender, "&e/holo removeline <id> <index> &8- &7Remove a specific line");
-        send_feedback(&sender, "&e/holo interval <id> [ticks] &8- &7Configure or view auto-refresh interval");
+        send_feedback(
+            &sender,
+            "&e/holo addline <id> <text> &8- &7Add a new line of text",
+        );
+        send_feedback(
+            &sender,
+            "&e/holo setline <id> <index> <text> &8- &7Edit a specific line (1-indexed)",
+        );
+        send_feedback(
+            &sender,
+            "&e/holo removeline <id> <index> &8- &7Remove a specific line",
+        );
+        send_feedback(
+            &sender,
+            "&e/holo interval <id> [ticks] &8- &7Configure or view auto-refresh interval",
+        );
         send_feedback(&sender, "&e/holo tp <id> &8- &7Teleport to a hologram");
-        send_feedback(&sender, "&e/holo movehere <id> &8- &7Move a hologram to your position");
-        send_feedback(&sender, "&e/holo visual <id> <entity|item|block|offset|scale|faceplayer|clear> &8- &7Manage visual");
-        send_feedback(&sender, "&e/holo reload &8- &7Reload and respawn all holograms from disk");
-        send_feedback(&sender, "&e/holo save &8- &7Save all holograms to disk storage");
+        send_feedback(
+            &sender,
+            "&e/holo movehere <id> &8- &7Move a hologram to your position",
+        );
+        send_feedback(
+            &sender,
+            "&e/holo visual <id> <entity|item|block|offset|scale|faceplayer|clear> &8- &7Manage visual",
+        );
+        send_feedback(
+            &sender,
+            "&e/holo action <id> <list|clear|remove|add|size> &8- &7Manage click actions",
+        );
+        send_feedback(
+            &sender,
+            "&e/holo element <id> <list|add|remove|offset|scale|size|action> &8- &7Manage multi-visual elements",
+        );
+        send_feedback(
+            &sender,
+            "&e/holo reload &8- &7Reload and respawn all holograms from disk",
+        );
+        send_feedback(
+            &sender,
+            "&e/holo save &8- &7Save all holograms to disk storage",
+        );
         send_feedback(&sender, "&e/holo help &8- &7Display this help message");
         Ok(1)
     }
