@@ -58,11 +58,11 @@ impl Hologram {
             spawned = true;
         }
 
-        if !self.data.actions.is_empty() {
-            if let Some(interaction_entity) = entity::spawn_interaction(world, &self.data) {
-                self.interaction_entity = Some(interaction_entity);
-                spawned = true;
-            }
+        if !self.data.actions.is_empty()
+            && let Some(interaction_entity) = entity::spawn_interaction(world, &self.data)
+        {
+            self.interaction_entity = Some(interaction_entity);
+            spawned = true;
         }
 
         for element in &self.data.elements {
@@ -345,11 +345,11 @@ impl Hologram {
                     } else {
                         entity::update_element_interaction(interaction_entity, element);
                     }
-                } else if !element.actions.is_empty() {
-                    if let Some(current_world) = world {
-                        handle.interaction_entity =
-                            entity::spawn_element_interaction(current_world, &self.data, element);
-                    }
+                } else if !element.actions.is_empty()
+                    && let Some(current_world) = world
+                {
+                    handle.interaction_entity =
+                        entity::spawn_element_interaction(current_world, &self.data, element);
                 }
                 self.element_handles.push(handle);
             } else if let Some(current_world) = world {
